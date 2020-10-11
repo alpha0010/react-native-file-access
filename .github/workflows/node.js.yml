@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      id: cache-node
+      with:
+        path: node_modules
+        key: ${{ hashFiles('package.json') }}
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - run: yarn install
+      if: steps.cache-node.outputs.cache-hit != 'true'
+    - run: yarn lint
+    - run: yarn typescript
+    - run: yarn test --coverage
+    - run: yarn prepare
