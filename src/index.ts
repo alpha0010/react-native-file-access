@@ -27,6 +27,29 @@ type FileAccessType = {
   exists(path: string): Promise<boolean>;
 
   /**
+   * Save a network request to a file.
+   */
+  fetch(
+    resource: string,
+    init: {
+      body?: string;
+      headers?: { [key: string]: string };
+      method?: string;
+      /**
+       * Output path.
+       */
+      path?: string;
+    }
+  ): Promise<{
+    headers: { [key: string]: string };
+    ok: boolean;
+    redirected: boolean;
+    status: number;
+    statusText: string;
+    url: string;
+  }>;
+
+  /**
    * Check if a path is a directory.
    */
   isDir(path: string): Promise<boolean>;

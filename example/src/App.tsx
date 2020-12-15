@@ -53,6 +53,29 @@ export function App() {
           return prev.slice();
         })
       );
+
+    FileAccess.fetch('https://example.com', {
+      path: FileAccess.CacheDir + '/download.html',
+    })
+      .then((res) => {
+        setInfo((prev) => {
+          prev.push({
+            key: 'fetch(https://example.com)',
+            value: JSON.stringify(res),
+          });
+          return prev.slice();
+        });
+        return FileAccess.readFile(FileAccess.CacheDir + '/download.html');
+      })
+      .then((res) =>
+        setInfo((prev) => {
+          prev.push({
+            key: 'fetch(https://example.com)',
+            value: res.substring(0, 64),
+          });
+          return prev.slice();
+        })
+      );
   }, [setInfo]);
 
   return (

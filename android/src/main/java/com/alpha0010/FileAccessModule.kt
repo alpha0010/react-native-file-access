@@ -5,9 +5,13 @@ import com.facebook.react.bridge.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.*
+import okhttp3.Callback
 import java.io.File
+import java.io.IOException
 
 class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+  private val httpClient = OkHttpClient()
   private val ioScope = CoroutineScope(Dispatchers.IO)
 
   override fun getName(): String {
@@ -69,6 +73,65 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
         promise.reject(e)
       }
     }
+  }
+
+  @ReactMethod
+  fun fetch(resource: String, init: ReadableMap, promise: Promise) {
+    val request = try {
+      val builder = Request.Builder().url((resource))
+
+      if (init.hasKey("method")) {
+        if (init.hasKey("body")) {
+          builder.method(
+            init.getString("method")!!,
+            RequestBody.create(null, init.getString("body")!!)
+          )
+        } else {
+          builder.method(init.getString("method")!!, null)
+        }
+      }
+
+      if (init.hasKey("headers")) {
+        for (header in init.getMap("headers")!!.entryIterator) {
+          builder.header(header.key, header.value as String)
+        }
+      }
+
+      builder.build()
+    } catch (e: Throwable) {
+      promise.reject(e)
+      return
+    }
+
+    httpClient.newCall(request).enqueue(object : Callback {
+      override fun onFailure(call: Call, e: IOException) {
+        promise.reject(e)
+      }
+
+      override fun onResponse(call: Call, response: Response) {
+        try {
+          response.use {
+            if (init.hasKey("path")) {
+              File(init.getString("path"))
+                .outputStream()
+                .use { response.body()!!.byteStream().copyTo(it) }
+            }
+
+            val headers = response.headers().names().map { it to response.header(it) }
+            promise.resolve(Arguments.makeNativeMap(mapOf(
+              "headers" to Arguments.makeNativeMap(headers.toMap()),
+              "ok" to response.isSuccessful,
+              "redirected" to response.isRedirect,
+              "status" to response.code(),
+              "statusText" to response.message(),
+              "url" to response.request().url().toString()
+            )))
+          }
+        } catch (e: Throwable) {
+          promise.reject(e)
+        }
+      }
+    })
   }
 
   @ReactMethod
