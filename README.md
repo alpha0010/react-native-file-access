@@ -1,6 +1,7 @@
 # react-native-file-access
 
-Filesystem access for React Native
+Filesystem access for React Native. Supports saving network requests directly
+to the filesystem.
 
 ## Installation
 
@@ -11,12 +12,18 @@ npm install react-native-file-access
 ## Usage
 
 ```js
-import FileAccess from "react-native-file-access";
+import { FileAccess } from 'react-native-file-access';
 
 // ...
 
-const result = await FileAccess.multiply(3, 7);
+const text = await FileAccess.readFile(FileAccess.CacheDir + '/test.txt');
 ```
+
+## Alternatives
+
+- [expo-file-system](https://docs.expo.io/versions/latest/sdk/filesystem/)
+- [rn-fetch-blob](https://github.com/joltup/rn-fetch-blob)
+- [react-native-fs](https://github.com/itinance/react-native-fs)
 
 ## Contributing
 
