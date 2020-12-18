@@ -6,6 +6,7 @@ export function App() {
   const [info, setInfo] = useState<{ key: string; value: string }[]>([]);
 
   useEffect(() => {
+    // Directory constants.
     setInfo([
       { key: 'CacheDir', value: Dirs.CacheDir },
       { key: 'DatabaseDir', value: Dirs.DatabaseDir ?? '<undefined>' },
@@ -14,6 +15,28 @@ export function App() {
       { key: 'MainBundleDir', value: Dirs.MainBundleDir },
     ]);
 
+    // Deletes and asset extraction.
+    FileSystem.unlink(Dirs.CacheDir + '/BundledData.txt')
+      .then(() => console.log('Deleted BundledData.txt'))
+      .catch(() => console.log('Did not delete BundledData.txt'))
+      .then(() =>
+        FileSystem.cpAsset(
+          'BundledData.txt',
+          Dirs.CacheDir + '/BundledData.txt'
+        )
+      )
+      .then(() => FileSystem.readFile(Dirs.CacheDir + '/BundledData.txt'))
+      .then((res) =>
+        setInfo((prev) => {
+          prev.push({
+            key: 'readFile(CacheDir/BundledData.txt)',
+            value: JSON.stringify(res),
+          });
+          return prev.slice();
+        })
+      );
+
+    // Disk usage.
     FileSystem.df().then((res) =>
       setInfo((prev) => {
         prev.push({ key: 'df()', value: JSON.stringify(res) });
@@ -42,6 +65,7 @@ export function App() {
       })
     );
 
+    // Read/write strings.
     FileSystem.writeFile(Dirs.CacheDir + '/test.txt', 'Data file in CacheDir.')
       .then(() => FileSystem.readFile(Dirs.CacheDir + '/test.txt'))
       .then((res) =>
@@ -54,6 +78,7 @@ export function App() {
         })
       );
 
+    // Network access.
     FileSystem.fetch('https://example.com', {
       path: Dirs.CacheDir + '/download.html',
     })

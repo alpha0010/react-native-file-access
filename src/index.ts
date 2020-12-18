@@ -23,6 +23,11 @@ type FileAccessType = {
   cp(source: string, target: string): Promise<void>;
 
   /**
+   * Copy a bundled asset file.
+   */
+  cpAsset(asset: string, target: string): Promise<void>;
+
+  /**
    * Check device available space.
    */
   df(): Promise<FsStat>;

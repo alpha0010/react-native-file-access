@@ -40,6 +40,18 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   @ReactMethod
+  fun cpAsset(asset: String, target: String, promise: Promise) {
+    try {
+      reactApplicationContext.assets.open(asset).use { assetStream ->
+        File(target).outputStream().use { assetStream.copyTo(it) }
+      }
+      promise.resolve(null)
+    } catch (e: Throwable) {
+      promise.reject(e)
+    }
+  }
+
+  @ReactMethod
   fun df(promise: Promise) {
     ioScope.launch {
       try {

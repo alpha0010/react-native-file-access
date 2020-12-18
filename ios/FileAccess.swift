@@ -19,6 +19,21 @@ class FileAccess: NSObject {
         }
     }
 
+    @objc(cpAsset:withTarget:withResolver:withRejecter:)
+    func cpAsset(asset: String, target: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        guard let assetPath = Bundle.main.path(forResource: asset, ofType: nil) else {
+            reject("ENOENT", "Asset \(asset) not found", nil)
+            return
+        }
+
+        do {
+            try FileManager.default.copyItem(atPath: assetPath, toPath: target)
+            resolve(nil)
+        } catch {
+            reject("ERR", "Failed to copy '\(asset)' to '\(target)'.", error)
+        }
+    }
+
     @objc(df:withRejecter:)
     func df(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
