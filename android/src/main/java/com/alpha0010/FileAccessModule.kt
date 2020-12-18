@@ -29,10 +29,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun cp(source: String, target: String, promise: Promise) {
     ioScope.launch {
       try {
-        val sourceFile = File(source)
-        val targetFile = File(target)
-        sourceFile.copyTo(targetFile, overwrite = true)
-
+        File(source).copyTo(File(target), overwrite = true)
         promise.resolve(null)
       } catch (e: Throwable) {
         promise.reject(e)
@@ -150,7 +147,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
     ioScope.launch {
       try {
         val fileList = Arguments.createArray()
-        File(path).listFiles().forEach { file -> fileList.pushString(file.absolutePath) }
+        File(path).list().forEach { fileList.pushString(it) }
         promise.resolve(fileList)
       } catch (e: Throwable) {
         promise.reject(e)
@@ -221,9 +218,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun writeFile(path: String, data: String, promise: Promise) {
     ioScope.launch {
       try {
-        val file = File(path)
-        file.writeText(data)
-
+        File(path).writeText(data)
         promise.resolve(null)
       } catch (e: Throwable) {
         promise.reject(e)
