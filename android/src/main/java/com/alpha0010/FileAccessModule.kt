@@ -21,7 +21,9 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   override fun getConstants(): MutableMap<String, Any> {
     return hashMapOf(
       "CacheDir" to reactApplicationContext.cacheDir.absolutePath,
-      "DocumentDir" to reactApplicationContext.filesDir.absolutePath
+      "DatabaseDir" to reactApplicationContext.getDatabasePath("FileAccessProbe").parent,
+      "DocumentDir" to reactApplicationContext.filesDir.absolutePath,
+      "MainBundleDir" to reactApplicationContext.applicationInfo.dataDir
     )
   }
 

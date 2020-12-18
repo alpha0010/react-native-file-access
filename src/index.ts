@@ -1,5 +1,14 @@
 import { NativeModules } from 'react-native';
 
+export type FetchResult = {
+  headers: { [key: string]: string };
+  ok: boolean;
+  redirected: boolean;
+  status: number;
+  statusText: string;
+  url: string;
+};
+
 export type FsStat = {
   internal_free: number;
   internal_total: number;
@@ -8,9 +17,6 @@ export type FsStat = {
 };
 
 type FileAccessType = {
-  CacheDir: string;
-  DocumentDir: string;
-
   /**
    * Copy a file.
    */
@@ -40,14 +46,7 @@ type FileAccessType = {
        */
       path?: string;
     }
-  ): Promise<{
-    headers: { [key: string]: string };
-    ok: boolean;
-    redirected: boolean;
-    status: number;
-    statusText: string;
-    url: string;
-  }>;
+  ): Promise<FetchResult>;
 
   /**
    * Check if a path is a directory.
@@ -85,4 +84,12 @@ type FileAccessType = {
   writeFile(path: string, data: string): Promise<void>;
 };
 
-export const FileAccess: FileAccessType = NativeModules.RNFileAccess;
+export const Dirs: {
+  CacheDir: string;
+  DatabaseDir?: string;
+  DocumentDir: string;
+  LibraryDir?: string;
+  MainBundleDir: string;
+} = NativeModules.RNFileAccess?.getConstants();
+
+export const FileSystem: FileAccessType = NativeModules.RNFileAccess;
