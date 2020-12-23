@@ -9,6 +9,14 @@ export type FetchResult = {
   url: string;
 };
 
+export type FileStat = {
+  filename: string;
+  lastModified: number;
+  path: string;
+  size: number;
+  type: 'directory' | 'file';
+};
+
 export type FsStat = {
   internal_free: number;
   internal_total: number;
@@ -77,6 +85,11 @@ type FileAccessType = {
    * Read the content of a file.
    */
   readFile(path: string): Promise<string>;
+
+  /**
+   * Read file metadata.
+   */
+  stat(path: string): Promise<FileStat>;
 
   /**
    * Delete a file.

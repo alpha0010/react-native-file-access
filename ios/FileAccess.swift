@@ -117,11 +117,8 @@ class FileAccess: NSObject {
 
     @objc(isDir:withResolver:withRejecter:)
     func isDir(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        var isDir: ObjCBool = false
-        resolve(
-            FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
-                && isDir.boolValue
-        )
+        let status = checkIfIsDirectory(path: path)
+        resolve(status.exists && status.isDirectory)
     }
 
     @objc(ls:withResolver:withRejecter:)
@@ -161,6 +158,23 @@ class FileAccess: NSObject {
         }
     }
 
+    @objc(stat:withResolver:withRejecter:)
+    func stat(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        do {
+            let pathUrl = URL(fileURLWithPath: path)
+            let attrs = try FileManager.default.attributesOfItem(atPath: path)
+            resolve([
+                "filename": pathUrl.lastPathComponent,
+                "lastModified": 1000 * (attrs[.modificationDate] as! NSDate).timeIntervalSince1970,
+                "path": pathUrl.path,
+                "size": attrs[.size],
+                "type": checkIfIsDirectory(path: path).isDirectory ? "directory" : "file"
+            ])
+        } catch {
+            reject("ERR", "Failed to stat '\(path)'.", error)
+        }
+    }
+
     @objc(unlink:withResolver:withRejecter:)
     func unlink(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
@@ -179,5 +193,12 @@ class FileAccess: NSObject {
         } catch {
             reject("ERR", "Failed to write to '\(path)'.", error)
         }
+    }
+
+    private func checkIfIsDirectory(path: String) -> (exists: Bool, isDirectory: Bool) {
+        var isDir: ObjCBool = false
+        let exists = FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
+        let isDirectory = isDir.boolValue
+        return (exists, isDirectory)
     }
 }

@@ -216,6 +216,26 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   @ReactMethod
+  fun stat(path: String, promise: Promise) {
+    try {
+      val file = File(path)
+      if (file.exists()) {
+        promise.resolve(Arguments.makeNativeMap(mapOf(
+          "filename" to file.name,
+          "lastModified" to file.lastModified(),
+          "path" to file.path,
+          "size" to file.length(),
+          "type" to if (file.isDirectory) "directory" else "file",
+        )))
+      } else {
+        promise.reject("ENOENT", "'$path' does not exist.")
+      }
+    } catch (e: Throwable) {
+      promise.reject(e)
+    }
+  }
+
+  @ReactMethod
   fun unlink(path: String, promise: Promise) {
     try {
       if (File(path).delete()) {

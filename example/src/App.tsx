@@ -100,6 +100,16 @@ export function App() {
           });
           return prev.slice();
         })
+      )
+      .then(() => FileSystem.stat(Dirs.CacheDir + '/download.html'))
+      .then((res) =>
+        setInfo((prev) => {
+          prev.push({
+            key: 'stat(CacheDir/download.html)',
+            value: JSON.stringify(res),
+          });
+          return prev.slice();
+        })
       );
   }, [setInfo]);
 
