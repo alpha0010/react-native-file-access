@@ -76,6 +76,16 @@ export function App() {
           });
           return prev.slice();
         })
+      )
+      .then(() => FileSystem.hash(Dirs.CacheDir + '/test.txt', 'MD5'))
+      .then((res) =>
+        setInfo((prev) => {
+          prev.push({
+            key: 'hash(CacheDir/test.txt, MD5)',
+            value: JSON.stringify(res),
+          });
+          return prev.slice();
+        })
       );
 
     // Network access.

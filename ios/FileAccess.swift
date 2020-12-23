@@ -115,6 +115,44 @@ class FileAccess: NSObject {
         downloadTask.resume()
     }
 
+    @objc(hash:withAlgorithm:withResolver:withRejecter:)
+    func hash(path: String, algorithm: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        guard let data = NSData(contentsOfFile: path) else {
+            reject("ERR", "Failed to read '\(path)'.", nil)
+            return
+        }
+
+        let hashAlgo: (UnsafeRawPointer?, CC_LONG, UnsafeMutablePointer<UInt8>?) -> UnsafeMutablePointer<UInt8>?
+        let digestLength: Int32
+        switch algorithm {
+        case "MD5":
+            hashAlgo = CC_MD5
+            digestLength = CC_MD5_DIGEST_LENGTH
+        case "SHA-1":
+            hashAlgo = CC_SHA1
+            digestLength = CC_SHA1_DIGEST_LENGTH
+        case "SHA-224":
+            hashAlgo = CC_SHA224
+            digestLength = CC_SHA224_DIGEST_LENGTH
+        case "SHA-256":
+            hashAlgo = CC_SHA256
+            digestLength = CC_SHA256_DIGEST_LENGTH
+        case "SHA-384":
+            hashAlgo = CC_SHA384
+            digestLength = CC_SHA384_DIGEST_LENGTH
+        case "SHA-512":
+            hashAlgo = CC_SHA512
+            digestLength = CC_SHA512_DIGEST_LENGTH
+        default:
+            reject("ERR", "Unknown algorithm '\(algorithm)'.", nil)
+            return
+        }
+
+        var digest = [UInt8](repeating: 0, count: Int(digestLength));
+        _ = hashAlgo(data.bytes, CC_LONG(data.length), &digest)
+        resolve(digest.map { String(format: "%02x", $0) }.joined())
+    }
+
     @objc(isDir:withResolver:withRejecter:)
     func isDir(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         let status = checkIfIsDirectory(path: path)

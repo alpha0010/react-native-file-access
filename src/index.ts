@@ -24,6 +24,14 @@ export type FsStat = {
   external_total?: number;
 };
 
+export type HashAlgorithm =
+  | 'MD5'
+  | 'SHA-1'
+  | 'SHA-224'
+  | 'SHA-256'
+  | 'SHA-384'
+  | 'SHA-512';
+
 type FileAccessType = {
   /**
    * Copy a file.
@@ -60,6 +68,11 @@ type FileAccessType = {
       path?: string;
     }
   ): Promise<FetchResult>;
+
+  /**
+   * Hash the file content.
+   */
+  hash(path: string, algorithm: HashAlgorithm): Promise<string>;
 
   /**
    * Check if a path is a directory.

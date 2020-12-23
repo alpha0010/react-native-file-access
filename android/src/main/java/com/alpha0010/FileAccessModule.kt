@@ -9,6 +9,7 @@ import okhttp3.*
 import okhttp3.Callback
 import java.io.File
 import java.io.IOException
+import java.security.MessageDigest
 
 class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
   private val httpClient = OkHttpClient()
@@ -143,6 +144,26 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
         }
       }
     })
+  }
+
+  @ReactMethod
+  fun hash(path: String, algorithm: String, promise: Promise) {
+    try {
+      val digest = MessageDigest.getInstance(algorithm)
+      File(path).inputStream().use {
+        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+        var bytes = it.read(buffer)
+        while (bytes >= 0) {
+          digest.update(buffer, 0, bytes)
+          bytes = it.read(buffer)
+        }
+      }
+      promise.resolve(
+        digest.digest().joinToString("") { "%02x".format(it) }
+      )
+    } catch (e: Throwable) {
+      promise.reject(e)
+    }
   }
 
   @ReactMethod
