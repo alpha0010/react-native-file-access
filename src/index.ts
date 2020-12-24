@@ -34,6 +34,16 @@ export type HashAlgorithm =
 
 type FileAccessType = {
   /**
+   * Append content to a file.
+   */
+  appendFile(path: string, data: string): Promise<void>;
+
+  /**
+   * Append a file to another file.
+   */
+  concatFiles(source: string, target: string): Promise<void>;
+
+  /**
    * Copy a file.
    */
   cp(source: string, target: string): Promise<void>;

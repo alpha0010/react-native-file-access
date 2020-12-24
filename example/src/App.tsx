@@ -88,6 +88,26 @@ export function App() {
         })
       );
 
+    FileSystem.writeFile(Dirs.CacheDir + '/1.txt', 'File 1.')
+      .then(() => FileSystem.writeFile(Dirs.CacheDir + '/2.txt', 'File 2.'))
+      .then(() => FileSystem.appendFile(Dirs.CacheDir + '/1.txt', 'Appended.'))
+      .then(() =>
+        FileSystem.concatFiles(
+          Dirs.CacheDir + '/1.txt',
+          Dirs.CacheDir + '/2.txt'
+        )
+      )
+      .then(() => FileSystem.readFile(Dirs.CacheDir + '/2.txt'))
+      .then((res) =>
+        setInfo((prev) => {
+          prev.push({
+            key: 'append/concat',
+            value: JSON.stringify(res),
+          });
+          return prev.slice();
+        })
+      );
+
     // Network access.
     FileSystem.fetch('https://example.com', {
       path: Dirs.CacheDir + '/download.html',

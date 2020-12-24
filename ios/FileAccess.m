@@ -2,6 +2,14 @@
 
 @interface RCT_EXTERN_REMAP_MODULE(RNFileAccess, FileAccess, NSObject)
 
+RCT_EXTERN_METHOD(appendFile:(NSString *)path withData:(NSString *)data
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(concatFiles:(NSString *)source withTarget:(NSString *)target
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(cp:(NSString *)source withTarget:(NSString *)target
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)

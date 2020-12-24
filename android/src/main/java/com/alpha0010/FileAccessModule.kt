@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import okhttp3.*
 import okhttp3.Callback
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.security.MessageDigest
 
@@ -26,6 +27,30 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
       "DocumentDir" to reactApplicationContext.filesDir.absolutePath,
       "MainBundleDir" to reactApplicationContext.applicationInfo.dataDir
     )
+  }
+
+  @ReactMethod
+  fun appendFile(path: String, data: String, promise: Promise) {
+    ioScope.launch {
+      try {
+        File(path).appendText(data)
+        promise.resolve(null)
+      } catch (e: Throwable) {
+        promise.reject(e)
+      }
+    }
+  }
+
+  @ReactMethod
+  fun concatFiles(source: String, target: String, promise: Promise) {
+    try {
+      File(source).inputStream().use { input ->
+        FileOutputStream(File(target), true).use { input.copyTo(it) }
+      }
+      promise.resolve(null)
+    } catch (e: Throwable) {
+      promise.reject(e)
+    }
   }
 
   @ReactMethod

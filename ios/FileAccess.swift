@@ -1,3 +1,5 @@
+import CommonCrypto
+
 @objc(FileAccess)
 class FileAccess: NSObject {
     @objc func constantsToExport() -> NSObject {
@@ -7,6 +9,41 @@ class FileAccess: NSObject {
             "LibraryDir": NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first!,
             "MainBundleDir": Bundle.main.bundlePath
         ] as NSObject
+    }
+
+    @objc(appendFile:withData:withResolver:withRejecter:)
+    func appendFile(path: String, data: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        guard let encodedData = data.data(using: .utf8), let handle = FileHandle(forWritingAtPath: path) else {
+            reject("ERR", "Failed to append to '\(path)'.", nil)
+            return
+        }
+
+        handle.seekToEndOfFile()
+        handle.write(encodedData)
+        handle.closeFile()
+        resolve(nil)
+    }
+
+    @objc(concatFiles:withTarget:withResolver:withRejecter:)
+    func concatFiles(source: String, target: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        guard let input = InputStream(fileAtPath: source), let output = OutputStream(toFileAtPath: target, append: true) else {
+            reject("ERR", "Failed to concat '\(source)' to '\(target)'.", nil)
+            return
+        }
+
+        input.open()
+        output.open()
+        let bufferSize = 8 * 1024
+        var buffer = [UInt8](repeating: 0, count: bufferSize);
+        var bytes = input.read(&buffer, maxLength: bufferSize)
+        while bytes > 0 {
+            output.write(buffer, maxLength: bytes)
+            bytes = input.read(&buffer, maxLength: bufferSize)
+        }
+        output.close()
+        input.close()
+
+        resolve(nil)
     }
 
     @objc(cp:withTarget:withResolver:withRejecter:)
