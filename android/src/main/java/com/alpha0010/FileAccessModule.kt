@@ -45,9 +45,10 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun concatFiles(source: String, target: String, promise: Promise) {
     try {
       File(source).inputStream().use { input ->
-        FileOutputStream(File(target), true).use { input.copyTo(it) }
+        FileOutputStream(File(target), true).use {
+          promise.resolve(input.copyTo(it).toInt())
+        }
       }
-      promise.resolve(null)
     } catch (e: Throwable) {
       promise.reject(e)
     }

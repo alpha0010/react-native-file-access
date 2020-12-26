@@ -33,17 +33,19 @@ class FileAccess: NSObject {
 
         input.open()
         output.open()
+        var bytesCopied = 0
         let bufferSize = 8 * 1024
         var buffer = [UInt8](repeating: 0, count: bufferSize);
         var bytes = input.read(&buffer, maxLength: bufferSize)
         while bytes > 0 {
             output.write(buffer, maxLength: bytes)
+            bytesCopied += bytes
             bytes = input.read(&buffer, maxLength: bufferSize)
         }
         output.close()
         input.close()
 
-        resolve(nil)
+        resolve(bytesCopied)
     }
 
     @objc(cp:withTarget:withResolver:withRejecter:)

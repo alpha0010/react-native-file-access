@@ -40,8 +40,10 @@ type FileAccessType = {
 
   /**
    * Append a file to another file.
+   *
+   * Returns number of bytes written.
    */
-  concatFiles(source: string, target: string): Promise<void>;
+  concatFiles(source: string, target: string): Promise<number>;
 
   /**
    * Copy a file.
