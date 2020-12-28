@@ -1,6 +1,7 @@
 package com.alpha0010
 
 import android.os.StatFs
+import android.os.Environment
 import com.facebook.react.bridge.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,8 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
       "CacheDir" to reactApplicationContext.cacheDir.absolutePath,
       "DatabaseDir" to reactApplicationContext.getDatabasePath("FileAccessProbe").parent,
       "DocumentDir" to reactApplicationContext.filesDir.absolutePath,
-      "MainBundleDir" to reactApplicationContext.applicationInfo.dataDir
+      "MainBundleDir" to reactApplicationContext.applicationInfo.dataDir,
+      "DownloadDir", to Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()
     )
   }
 
