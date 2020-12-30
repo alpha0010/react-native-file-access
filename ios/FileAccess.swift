@@ -3,9 +3,9 @@ import CommonCrypto
 @objc(FileAccess)
 class FileAccess: NSObject {
     @objc static func requiresMainQueueSetup() -> Bool {
-        return true
+        return false
     }
-    
+
     @objc func constantsToExport() -> NSObject {
         return [
             "CacheDir": NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!,
@@ -75,6 +75,34 @@ class FileAccess: NSObject {
         } catch {
             reject("ERR", "Failed to copy '\(asset)' to '\(target)'.", error)
         }
+    }
+
+    @objc(cpExternal:withTargetName:withDir:withResolver:withRejecter:)
+    func cpExternal(source: String, targetName: String, dir: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        let targetFolder: String
+        switch dir {
+        case "audio":
+            targetFolder = NSSearchPathForDirectoriesInDomains(.musicDirectory, .userDomainMask, true).first!
+        case "downloads":
+            targetFolder = NSSearchPathForDirectoriesInDomains(.downloadsDirectory, .userDomainMask, true).first!
+        case "images":
+            targetFolder = NSSearchPathForDirectoriesInDomains(.picturesDirectory, .userDomainMask, true).first!
+        case "video":
+            targetFolder = NSSearchPathForDirectoriesInDomains(.moviesDirectory, .userDomainMask, true).first!
+        default:
+            reject("ERR", "Unknown destination '\(dir)'.", nil)
+            return
+        }
+
+        do {
+            try FileManager.default.createDirectory(atPath: targetFolder, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            // Ignored.
+        }
+
+        let targetUrl = URL(fileURLWithPath: targetFolder, isDirectory: true)
+            .appendingPathComponent(targetName, isDirectory: false)
+        cp(source: source, target: targetUrl.path, resolve: resolve, reject: reject)
     }
 
     @objc(df:withRejecter:)

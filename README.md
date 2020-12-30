@@ -41,6 +41,12 @@ const text = await FileSystem.readFile(Dirs.CacheDir + '/test.txt');
 `FileSystem.cpAsset(asset: string, target: string): Promise<void>`
 - Copy a bundled asset file.
 
+`FileSystem.cpExternal(source: string, targetName: string, dir: 'audio' | 'downloads' | 'images' | 'video'): Promise<void>`
+- Copy a file to an externally controlled location.
+  - On Android API level < 29, may require permission WRITE_EXTERNAL_STORAGE.
+  - On iOS, consider using `Dirs.DocumentDir` with `UIFileSharingEnabled`
+    and `LSSupportsOpeningDocumentsInPlace` enabled.
+
 `FileSystem.df(): Promise<{ internal_free: number, internal_total: number, external_free?: number, external_total?: number }>`
 - Check device available space.
 

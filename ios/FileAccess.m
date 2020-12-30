@@ -18,6 +18,12 @@ RCT_EXTERN_METHOD(cpAsset:(NSString *)asset withTarget:(NSString *)target
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(cpExternal:(NSString *)source
+                 withTargetName:(NSString *)targetName
+                 withDir:(NSString *)dir
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(df:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 
