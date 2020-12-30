@@ -2,6 +2,10 @@ import CommonCrypto
 
 @objc(FileAccess)
 class FileAccess: NSObject {
+    @objc static func requiresMainQueueSetup() -> Bool {
+        return true
+    }
+    
     @objc func constantsToExport() -> NSObject {
         return [
             "CacheDir": NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!,
