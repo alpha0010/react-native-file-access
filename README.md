@@ -1,5 +1,7 @@
 # react-native-file-access
 
+[![npm](https://img.shields.io/npm/v/react-native-file-access)](https://www.npmjs.com/package/react-native-file-access)
+
 Filesystem access for React Native. Supports saving network requests directly
 to the filesystem.
 
