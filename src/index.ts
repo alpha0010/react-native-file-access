@@ -1,5 +1,7 @@
 import { NativeModules } from 'react-native';
 
+export type ExternalDir = 'audio' | 'downloads' | 'images' | 'video';
+
 export type FetchResult = {
   headers: { [key: string]: string };
   ok: boolean;
@@ -54,6 +56,17 @@ type FileAccessType = {
    * Copy a bundled asset file.
    */
   cpAsset(asset: string, target: string): Promise<void>;
+
+  /**
+   * Copy a file to an externally controlled location.
+   *
+   * On Android API level < 29, may require permission WRITE_EXTERNAL_STORAGE.
+   */
+  cpExternal(
+    source: string,
+    targetName: string,
+    dir: ExternalDir
+  ): Promise<void>;
 
   /**
    * Check device available space.

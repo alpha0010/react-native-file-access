@@ -1,6 +1,9 @@
 package com.alpha0010
 
+import android.content.ContentValues
+import android.os.Environment
 import android.os.StatFs
+import android.provider.MediaStore
 import com.facebook.react.bridge.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -79,6 +82,64 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   @ReactMethod
+  fun cpExternal(source: String, targetName: String, dir: String, promise: Promise) {
+    try {
+      File(source).inputStream().use { input ->
+        if (dir == "downloads") {
+          if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            reactApplicationContext.contentResolver.insert(
+              MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+              ContentValues().apply { put(MediaStore.Downloads.DISPLAY_NAME, targetName) }
+            )?.let { reactApplicationContext.contentResolver.openOutputStream(it) }
+          } else {
+            @Suppress("DEPRECATION")
+            File(
+              Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+              targetName
+            ).outputStream()
+          }
+        } else {
+          when (dir) {
+            "audio" -> {
+              reactApplicationContext.contentResolver.insert(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                ContentValues().apply { put(MediaStore.Audio.Media.DISPLAY_NAME, targetName) }
+              )
+            }
+            "images" -> {
+              reactApplicationContext.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                ContentValues().apply { put(MediaStore.Images.Media.DISPLAY_NAME, targetName) }
+              )
+            }
+            "video" -> {
+              reactApplicationContext.contentResolver.insert(
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                ContentValues().apply { put(MediaStore.Video.Media.DISPLAY_NAME, targetName) }
+              )
+            }
+            else -> null
+          }?.let { reactApplicationContext.contentResolver.openOutputStream(it) }
+        }?.use { output ->
+          ioScope.launch {
+            try {
+              input.copyTo(output)
+              promise.resolve(null)
+            } catch (e: Throwable) {
+              promise.reject(e)
+            }
+          }
+          return
+        }
+
+        promise.reject("ERR", "Failed to copy to '$targetName' ('$dir')")
+      }
+    } catch (e: Throwable) {
+      promise.reject(e)
+    }
+  }
+
+  @ReactMethod
   fun df(promise: Promise) {
     ioScope.launch {
       try {
@@ -150,7 +211,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
         try {
           response.use {
             if (init.hasKey("path")) {
-              File(init.getString("path"))
+              File(init.getString("path")!!)
                 .outputStream()
                 .use { response.body()!!.byteStream().copyTo(it) }
             }
@@ -208,7 +269,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
     ioScope.launch {
       try {
         val fileList = Arguments.createArray()
-        File(path).list().forEach { fileList.pushString(it) }
+        File(path).list()?.forEach { fileList.pushString(it) }
         promise.resolve(fileList)
       } catch (e: Throwable) {
         promise.reject(e)
