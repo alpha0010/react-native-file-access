@@ -3,7 +3,8 @@
 [![npm](https://img.shields.io/npm/v/react-native-file-access)](https://www.npmjs.com/package/react-native-file-access)
 
 Filesystem access for React Native. Supports saving network requests directly
-to the filesystem.
+to the filesystem. Supports Android scoped storage, a requirement when targeting
+API 30 or higher.
 
 ## Installation
 
@@ -108,9 +109,17 @@ type FileStat = {
 
 ## Alternatives
 
+This library aims to be a modern implementation of filesystem api, using Kotlin/Swift
+and latest best practices. For a more established library, consider:
+
 - [expo-file-system](https://docs.expo.io/versions/latest/sdk/filesystem/)
+  - Well supported, a good option if already using Expo.
 - [rn-fetch-blob](https://github.com/joltup/rn-fetch-blob)
+  - Popuplar, and often a dependency of other libraries.
+  - Officially unmaintained, with known bugs.
 - [react-native-fs](https://github.com/itinance/react-native-fs)
+  - Large feature set.
+  - Low maintenance, aging codebase.
 
 ## Contributing
 
