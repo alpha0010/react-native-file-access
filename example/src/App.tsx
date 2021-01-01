@@ -97,7 +97,10 @@ export function App() {
           Dirs.CacheDir + '/2.txt'
         )
       )
-      .then(() => FileSystem.readFile(Dirs.CacheDir + '/2.txt'))
+      .then(() =>
+        FileSystem.mv(Dirs.CacheDir + '/2.txt', Dirs.CacheDir + '/renamed.txt')
+      )
+      .then(() => FileSystem.readFile(Dirs.CacheDir + '/renamed.txt'))
       .then((res) =>
         setInfo((prev) => {
           prev.push({

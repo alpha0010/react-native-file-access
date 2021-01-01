@@ -94,11 +94,7 @@ class FileAccess: NSObject {
             return
         }
 
-        do {
-            try FileManager.default.createDirectory(atPath: targetFolder, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            // Ignored.
-        }
+        try? FileManager.default.createDirectory(atPath: targetFolder, withIntermediateDirectories: true, attributes: nil)
 
         let targetUrl = URL(fileURLWithPath: targetFolder, isDirectory: true)
             .appendingPathComponent(targetName, isDirectory: false)
@@ -161,11 +157,7 @@ class FileAccess: NSObject {
 
             if let path = config["path"] as? String {
                 let pathUrl = URL(fileURLWithPath: path)
-                do {
-                    try FileManager.default.removeItem(at: pathUrl)
-                } catch {
-                    // Ignored.
-                }
+                try? FileManager.default.removeItem(at: pathUrl)
                 do {
                     try FileManager.default.moveItem(at: location, to: pathUrl)
                 } catch {
@@ -251,6 +243,7 @@ class FileAccess: NSObject {
     @objc(mv:withTarget:withResolver:withRejecter:)
     func mv(source: String, target: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
+            try? FileManager.default.removeItem(atPath: target)
             try FileManager.default.moveItem(atPath: source, toPath: target)
             resolve(nil)
         } catch {
