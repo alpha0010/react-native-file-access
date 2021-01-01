@@ -303,11 +303,10 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun mv(source: String, target: String, promise: Promise) {
     ioScope.launch {
       try {
-        if (File(source).renameTo(File(target))) {
-          promise.resolve(null)
-        } else {
-          promise.reject("EPERM", "Failed to rename '$source' to $target'.")
+        if (!File(source).renameTo(File(target))) {
+          File(source).also { it.copyTo(File(target), overwrite = true) }.delete()
         }
+        promise.resolve(null)
       } catch (e: Throwable) {
         promise.reject(e)
       }
