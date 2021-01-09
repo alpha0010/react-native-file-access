@@ -107,6 +107,13 @@ type FileStat = {
 `FileSystem.writeFile(path: string, data: string): Promise<void>`
 - Write content to a file.
 
+## Testing
+
+For ease of testing, this library contains a mock implementation:
+[jest/react-native-file-access.ts](https://github.com/alpha0010/react-native-file-access/blob/master/jest/react-native-file-access.ts).
+To use, copy it into the [`__mocks__`](https://jestjs.io/docs/en/manual-mocks#mocking-node-modules)
+folder, modifying if needed.
+
 ## Alternatives
 
 This library aims to be a modern implementation of filesystem api, using Kotlin/Swift
