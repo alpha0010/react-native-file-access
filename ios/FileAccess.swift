@@ -235,6 +235,7 @@ class FileAccess: NSObject {
     func mkdir(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
             try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+            resolve(nil)
         } catch {
             reject("ERR", "Failed to create directory '\(path)'.", error)
         }
