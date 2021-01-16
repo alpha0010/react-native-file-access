@@ -121,13 +121,11 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
             else -> null
           }?.let { reactApplicationContext.contentResolver.openOutputStream(it) }
         }?.use { output ->
-          ioScope.launch {
-            try {
-              input.copyTo(output)
-              promise.resolve(null)
-            } catch (e: Throwable) {
-              promise.reject(e)
-            }
+          try {
+            input.copyTo(output)
+            promise.resolve(null)
+          } catch (e: Throwable) {
+            promise.reject(e)
           }
           return
         }
