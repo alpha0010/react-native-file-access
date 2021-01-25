@@ -1,4 +1,4 @@
-package com.alpha0010
+package com.alpha0010.fs
 
 import android.content.ContentValues
 import android.os.Environment

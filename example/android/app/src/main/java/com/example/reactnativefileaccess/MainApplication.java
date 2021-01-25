@@ -3,7 +3,7 @@ package com.example.reactnativefileaccess;
 import android.app.Application;
 import android.content.Context;
 
-import com.alpha0010.FileAccessPackage;
+import com.alpha0010.fs.FileAccessPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;

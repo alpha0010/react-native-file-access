@@ -1,4 +1,4 @@
-package com.alpha0010
+package com.alpha0010.fs
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
