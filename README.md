@@ -32,8 +32,9 @@ const text = await FileSystem.readFile(Dirs.CacheDir + '/test.txt');
 
 #### Functions.
 
-`FileSystem.appendFile(path: string, data: string): Promise<void>`
+`FileSystem.appendFile(path: string, data: string, encoding?: 'utf8' | 'base64'): Promise<void>`
 - Append content to a file.
+  - Default encoding of `data` is assumed utf8.
 
 `FileSystem.concatFiles(source: string, target: string): Promise<number>`
 - Append a file to another file. Returns number of bytes written.
@@ -104,8 +105,9 @@ type FileStat = {
 `FileSystem.unlink(path: string): Promise<void>`
 - Delete a file.
 
-`FileSystem.writeFile(path: string, data: string): Promise<void>`
+`FileSystem.writeFile(path: string, data: string, encoding?: 'utf8' | 'base64'): Promise<void>`
 - Write content to a file.
+  - Default encoding of `data` is assumed utf8.
 
 ## Testing
 

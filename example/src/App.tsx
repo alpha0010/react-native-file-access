@@ -88,6 +88,22 @@ export function App() {
         })
       );
 
+    FileSystem.writeFile(
+      Dirs.CacheDir + '/base64.txt',
+      'QmFzZTY0IGRhdGEu',
+      'base64'
+    )
+      .then(() => FileSystem.readFile(Dirs.CacheDir + '/base64.txt'))
+      .then((res) =>
+        setInfo((prev) => {
+          prev.push({
+            key: 'readFile(CacheDir/base64.txt)',
+            value: JSON.stringify(res),
+          });
+          return prev.slice();
+        })
+      );
+
     FileSystem.writeFile(Dirs.CacheDir + '/1.txt', 'File 1.')
       .then(() => FileSystem.writeFile(Dirs.CacheDir + '/2.txt', 'File 2.'))
       .then(() => FileSystem.appendFile(Dirs.CacheDir + '/1.txt', 'Appended.'))

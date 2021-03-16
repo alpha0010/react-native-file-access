@@ -15,9 +15,10 @@ class FileAccess: NSObject {
         ] as NSObject
     }
 
-    @objc(appendFile:withData:withResolver:withRejecter:)
-    func appendFile(path: String, data: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        guard let encodedData = data.data(using: .utf8), let handle = FileHandle(forWritingAtPath: path) else {
+    @objc(appendFile:withData:withEncoding:withResolver:withRejecter:)
+    func appendFile(path: String, data: String, encoding: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        guard let encodedData = encoding == "base64" ? Data(base64Encoded: data) : data.data(using: .utf8),
+              let handle = FileHandle(forWritingAtPath: path) else {
             reject("ERR", "Failed to append to '\(path)'.", nil)
             return
         }
@@ -288,10 +289,15 @@ class FileAccess: NSObject {
         }
     }
 
-    @objc(writeFile:withData:withResolver:withRejecter:)
-    func writeFile(path: String, data: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+    @objc(writeFile:withData:withEncoding:withResolver:withRejecter:)
+    func writeFile(path: String, data: String, encoding: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
-            try data.write(toFile: path, atomically: false, encoding: .utf8)
+            if encoding == "base64" {
+                let pathUrl = URL(fileURLWithPath: path)
+                try Data(base64Encoded: data)!.write(to: pathUrl)
+            } else {
+                try data.write(toFile: path, atomically: false, encoding: .utf8)
+            }
             resolve(nil)
         } catch {
             reject("ERR", "Failed to write to '\(path)'.", error)

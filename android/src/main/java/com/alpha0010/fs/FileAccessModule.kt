@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.os.Environment
 import android.os.StatFs
 import android.provider.MediaStore
+import android.util.Base64
 import com.facebook.react.bridge.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,10 +34,14 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   @ReactMethod
-  fun appendFile(path: String, data: String, promise: Promise) {
+  fun appendFile(path: String, data: String, encoding: String, promise: Promise) {
     ioScope.launch {
       try {
-        File(path).appendText(data)
+        if (encoding == "base64") {
+          File(path).appendBytes(Base64.decode(data, Base64.DEFAULT))
+        } else {
+          File(path).appendText(data)
+        }
         promise.resolve(null)
       } catch (e: Throwable) {
         promise.reject(e)
@@ -354,10 +359,14 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   @ReactMethod
-  fun writeFile(path: String, data: String, promise: Promise) {
+  fun writeFile(path: String, data: String, encoding: String, promise: Promise) {
     ioScope.launch {
       try {
-        File(path).writeText(data)
+        if (encoding == "base64") {
+          File(path).writeBytes(Base64.decode(data, Base64.DEFAULT))
+        } else {
+          File(path).writeText(data)
+        }
         promise.resolve(null)
       } catch (e: Throwable) {
         promise.reject(e)
