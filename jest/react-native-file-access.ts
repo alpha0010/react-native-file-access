@@ -1,6 +1,7 @@
 /* global jest */
 
 import type {
+  ExternalDir,
   FetchResult,
   FileStat,
   FsStat,
@@ -45,6 +46,15 @@ class FileSystemMock {
   public cp = jest.fn(async (source: string, target: string) => {
     this.filesystem.set(target, this.getFileOrThrow(source));
   });
+
+  /**
+   * Copy a file to external storage
+   */
+  public cpExternal = jest.fn(
+    async (source: string, targetName: string, dir: ExternalDir) => {
+      this.filesystem.set(`/${dir}/${targetName}`, this.getFileOrThrow(source));
+    }
+  );
 
   /**
    * Copy a bundled asset file.
