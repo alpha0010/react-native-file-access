@@ -34,7 +34,7 @@ type FileAccessType = {
   ls(path: string): Promise<string[]>;
   mkdir(path: string): Promise<void>;
   mv(source: string, target: string): Promise<void>;
-  readFile(path: string): Promise<string>;
+  readFile(path: string, encoding: Encoding): Promise<string>;
   stat(path: string): Promise<FileStat>;
   unlink(path: string): Promise<void>;
   writeFile(path: string, data: string, encoding: Encoding): Promise<void>;

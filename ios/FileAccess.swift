@@ -253,10 +253,15 @@ class FileAccess: NSObject {
         }
     }
 
-    @objc(readFile:withResolver:withRejecter:)
-    func readFile(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+    @objc(readFile:withEncoding:withResolver:withRejecter:)
+    func readFile(path: String, encoding: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
-            try resolve(String(contentsOfFile: path))
+            if encoding == "base64" {
+                let binaryData = try Data(contentsOf: URL(fileURLWithPath: path))
+                resolve(binaryData.base64EncodedString())
+            } else {
+                try resolve(String(contentsOfFile: path))
+            }
         } catch {
             reject("ERR", "Failed to read '\(path)'.", error)
         }

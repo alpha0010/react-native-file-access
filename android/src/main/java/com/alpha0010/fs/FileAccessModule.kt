@@ -317,9 +317,13 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   @ReactMethod
-  fun readFile(path: String, promise: Promise) {
+  fun readFile(path: String, encoding: String, promise: Promise) {
     try {
-      promise.resolve(File(path).readText())
+      if (encoding == "base64") {
+        promise.resolve(Base64.encodeToString(File(path).readBytes(), Base64.DEFAULT))
+      } else {
+        promise.resolve(File(path).readText())
+      }
     } catch (e: Throwable) {
       promise.reject(e)
     }

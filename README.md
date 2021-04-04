@@ -86,8 +86,9 @@ type FetchResult = {
 `FileSystem.mv(source: string, target: string): Promise<void>`
 - Move a file.
 
-`FileSystem.readFile(path: string): Promise<string>`
+`FileSystem.readFile(path: string, encoding?: 'utf8' | 'base64'): Promise<string>`
 - Read the content of a file.
+  - Default encoding of returned string is utf8.
 
 ```
 FileSystem.stat(path: string): Promise<FileStat>

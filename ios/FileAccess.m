@@ -58,6 +58,7 @@ RCT_EXTERN_METHOD(mv:(NSString *)source withTarget:(NSString *)target
                  withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(readFile:(NSString *)path
+                 withEncoding:(NSString *)encoding
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 

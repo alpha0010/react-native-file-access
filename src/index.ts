@@ -130,8 +130,8 @@ export const FileSystem = {
   /**
    * Read the content of a file.
    */
-  readFile(path: string) {
-    return FileAccessNative.readFile(path);
+  readFile(path: string, encoding: Encoding = 'utf8') {
+    return FileAccessNative.readFile(path, encoding);
   },
 
   /**
