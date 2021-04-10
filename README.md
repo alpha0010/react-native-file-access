@@ -74,6 +74,12 @@ type FetchResult = {
 `FilesSystem.hash(path: string, algorithm: 'MD5' | 'SHA-1' | 'SHA-224' | 'SHA-256' | 'SHA-384' | 'SHA-512'): Promise<string>`
 - Hash the file content.
 
+`FilesSystem.getAppGroupDir(groupName: string): Promise<string>`
+- Get the directory for your app group (iOS only).
+  - App groups are used on iOS/MacOS for storing content, which is shared between apps.
+  - This is e.g. useful for sharing data between your iOS app and a widget or a watch app.
+
+
 `FilesSystem.isDir(path: string): Promise<boolean>`
 - Check if a path is a directory.
 
