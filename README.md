@@ -73,14 +73,13 @@ type FetchResult = {
 ```
 - Save a network request to a file.
 
-`FilesSystem.hash(path: string, algorithm: 'MD5' | 'SHA-1' | 'SHA-224' | 'SHA-256' | 'SHA-384' | 'SHA-512'): Promise<string>`
-- Hash the file content.
-
 `FilesSystem.getAppGroupDir(groupName: string): Promise<string>`
 - Get the directory for your app group (iOS only).
   - App groups are used on iOS/MacOS for storing content, which is shared between apps.
   - This is e.g. useful for sharing data between your iOS app and a widget or a watch app.
 
+`FilesSystem.hash(path: string, algorithm: 'MD5' | 'SHA-1' | 'SHA-224' | 'SHA-256' | 'SHA-384' | 'SHA-512'): Promise<string>`
+- Hash the file content.
 
 `FilesSystem.isDir(path: string): Promise<boolean>`
 - Check if a path is a directory.
@@ -138,6 +137,9 @@ and latest best practices. For a more established library, consider:
 - [react-native-fs](https://github.com/itinance/react-native-fs)
   - Large feature set.
   - Low maintenance, aging codebase.
+
+For more greater control over network requests, consider
+[react-native-blob-courier](https://github.com/edeckers/react-native-blob-courier).
 
 ## Contributing
 

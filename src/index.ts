@@ -172,11 +172,37 @@ export const FileSystem = {
   },
 };
 
+/**
+ * Directory constants.
+ */
 export const Dirs: {
+  /**
+   * Temporary files. System/user may delete these if device storage is low.
+   */
   CacheDir: string;
+
+  /**
+   * System recommended location for SQLite files.
+   *
+   * Android only.
+   */
   DatabaseDir?: string;
+
+  /**
+   * Persistent data. Generally user created content.
+   */
   DocumentDir: string;
+
+  /**
+   * Persistent app internal data.
+   *
+   * iOS only.
+   */
   LibraryDir?: string;
+
+  /**
+   * App's default root directory.
+   */
   MainBundleDir: string;
 
   /**
