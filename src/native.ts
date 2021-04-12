@@ -29,6 +29,7 @@ type FileAccessType = {
       path?: string;
     }
   ): Promise<FetchResult>;
+  getAppGroupDir(groupName: string): Promise<string>;
   hash(path: string, algorithm: HashAlgorithm): Promise<string>;
   isDir(path: string): Promise<boolean>;
   ls(path: string): Promise<string[]>;

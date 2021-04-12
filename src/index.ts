@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import { FileAccessNative } from './native';
 import type {
   Encoding,
@@ -90,6 +90,20 @@ export const FileSystem = {
     }
   ): Promise<FetchResult> {
     return FileAccessNative.fetch(resource, init);
+  },
+
+  /**
+   * Return the local storage directory for app groups.
+   *
+   * This is an Apple only feature.
+   */
+  getAppGroupDir(groupName: string) {
+    if (Platform.OS !== 'ios' && Platform.OS !== 'macos') {
+      return Promise.reject(
+        new Error('AppGroups are available on Apple devices only')
+      );
+    }
+    return FileAccessNative.getAppGroupDir(groupName);
   },
 
   /**

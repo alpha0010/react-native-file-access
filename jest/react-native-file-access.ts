@@ -1,5 +1,6 @@
 /* global jest */
 
+import { Platform } from 'react-native';
 import type {
   ExternalDir,
   FetchResult,
@@ -102,6 +103,18 @@ class FileSystemMock {
       };
     }
   );
+
+  /**
+   * Return the local storage directory for app groups.
+   *
+   * This is an Apple only feature.
+   */
+  public getAppGroupDir = jest.fn((groupName: string) => {
+    if (Platform.OS !== 'ios' && Platform.OS !== 'macos') {
+      throw new Error('AppGroups are available on Apple devices only');
+    }
+    return `${Dirs.DocumentDir}/shared/AppGroup/${groupName}`;
+  });
 
   /**
    * Hash the file content.

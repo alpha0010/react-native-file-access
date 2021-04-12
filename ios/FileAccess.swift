@@ -179,6 +179,16 @@ class FileAccess: NSObject {
         downloadTask.resume()
     }
 
+    @objc(getAppGroupDir:withResolver:withRejecter:)
+    func getAppGroupDir(groupName: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupName) else {
+            reject("ERR", "Could not resolve app group directory. The group name '\(groupName)' is invalid.", nil)
+            return
+        }
+
+        resolve(groupURL.path)
+    }
+
     @objc(hash:withAlgorithm:withResolver:withRejecter:)
     func hash(path: String, algorithm: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         guard let data = NSData(contentsOfFile: path) else {
