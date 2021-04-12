@@ -6,6 +6,7 @@ import android.os.StatFs
 import android.provider.MediaStore
 import android.util.Base64
 import com.facebook.react.bridge.*
+import com.facebook.react.modules.network.OkHttpClientProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,14 +18,13 @@ import java.io.IOException
 import java.security.MessageDigest
 
 class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-  private val httpClient = OkHttpClient()
   private val ioScope = CoroutineScope(Dispatchers.IO)
 
   override fun getName(): String {
     return "RNFileAccess"
   }
 
-  override fun getConstants(): MutableMap<String, Any> {
+  override fun getConstants(): MutableMap<String, String?> {
     return hashMapOf(
       "CacheDir" to reactApplicationContext.cacheDir.absolutePath,
       "DatabaseDir" to reactApplicationContext.getDatabasePath("FileAccessProbe").parent,
@@ -180,7 +180,10 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   @ReactMethod
   fun fetch(resource: String, init: ReadableMap, promise: Promise) {
     val request = try {
-      val builder = Request.Builder().url((resource))
+      // Request will be saved to a file, no reason to also save in cache.
+      val builder = Request.Builder()
+        .url(resource)
+        .cacheControl(CacheControl.Builder().noStore().build())
 
       if (init.hasKey("method")) {
         if (init.hasKey("body")) {
@@ -205,7 +208,9 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
       return
     }
 
-    httpClient.newCall(request).enqueue(object : Callback {
+    // Share client with RN core library.
+    val call = OkHttpClientProvider.getOkHttpClient().newCall(request)
+    call.enqueue(object : Callback {
       override fun onFailure(call: Call, e: IOException) {
         promise.reject(e)
       }
@@ -353,7 +358,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun unlink(path: String, promise: Promise) {
     try {
       if (File(path).delete()) {
-        promise.resolve((null))
+        promise.resolve(null)
       } else {
         promise.reject("ERR", "Failed to unlink '$path'.")
       }
