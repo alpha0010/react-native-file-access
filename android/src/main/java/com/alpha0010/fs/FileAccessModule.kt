@@ -25,11 +25,20 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   override fun getConstants(): MutableMap<String, String?> {
+    val sdCardDir = try {
+      // Search via env may not be reliable. Recent Android versions
+      // discourage/restrict full access to public locations.
+      System.getenv("SECONDARY_STORAGE") ?: System.getenv("EXTERNAL_STORAGE")
+    } catch (e: Throwable) {
+      null
+    }
+
     return hashMapOf(
       "CacheDir" to reactApplicationContext.cacheDir.absolutePath,
       "DatabaseDir" to reactApplicationContext.getDatabasePath("FileAccessProbe").parent,
       "DocumentDir" to reactApplicationContext.filesDir.absolutePath,
-      "MainBundleDir" to reactApplicationContext.applicationInfo.dataDir
+      "MainBundleDir" to reactApplicationContext.applicationInfo.dataDir,
+      "SDCardDir" to sdCardDir,
     )
   }
 

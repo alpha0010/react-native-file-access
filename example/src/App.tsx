@@ -13,6 +13,7 @@ export function App() {
       { key: 'DocumentDir', value: Dirs.DocumentDir },
       { key: 'LibraryDir', value: Dirs.LibraryDir ?? '<undefined>' },
       { key: 'MainBundleDir', value: Dirs.MainBundleDir },
+      { key: 'SDCardDir', value: Dirs.SDCardDir ?? '<undefined>' },
     ]);
 
     // Deletes and asset extraction.

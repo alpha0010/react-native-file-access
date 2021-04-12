@@ -178,4 +178,12 @@ export const Dirs: {
   DocumentDir: string;
   LibraryDir?: string;
   MainBundleDir: string;
+
+  /**
+   * Root path to removable media. Prefer `cpExternal()` when possible, as
+   * Android discourages this access method.
+   *
+   * Android only.
+   */
+  SDCardDir?: string;
 } = NativeModules.RNFileAccess?.getConstants();

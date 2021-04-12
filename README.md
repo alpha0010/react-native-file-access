@@ -29,6 +29,8 @@ const text = await FileSystem.readFile(Dirs.CacheDir + '/test.txt');
 - `Dirs.DocumentDir`
 - `Dirs.LibraryDir` (iOS only)
 - `Dirs.MainBundleDir`
+- `Dirs.SDCardDir` (Android only)
+  - Prefer `FileSystem.cpExternal()` when possible.
 
 #### Functions.
 
