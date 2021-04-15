@@ -1,6 +1,7 @@
 package com.alpha0010.fs
 
 import android.content.ContentValues
+import android.net.Uri
 import android.os.Environment
 import android.os.StatFs
 import android.provider.MediaStore
@@ -15,6 +16,7 @@ import okhttp3.Callback
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 import java.security.MessageDigest
 
 class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -61,7 +63,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   @ReactMethod
   fun concatFiles(source: String, target: String, promise: Promise) {
     try {
-      File(source).inputStream().use { input ->
+      openForReading(source).use { input ->
         FileOutputStream(File(target), true).use {
           promise.resolve(input.copyTo(it).toInt())
         }
@@ -75,7 +77,9 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun cp(source: String, target: String, promise: Promise) {
     ioScope.launch {
       try {
-        File(source).copyTo(File(target), overwrite = true)
+        openForReading(source).use { input ->
+          File(target).outputStream().use { input.copyTo(it) }
+        }
         promise.resolve(null)
       } catch (e: Throwable) {
         promise.reject(e)
@@ -98,7 +102,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   @ReactMethod
   fun cpExternal(source: String, targetName: String, dir: String, promise: Promise) {
     try {
-      File(source).inputStream().use { input ->
+      openForReading(source).use { input ->
         if (dir == "downloads") {
           if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             reactApplicationContext.contentResolver.insert(
@@ -254,7 +258,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun hash(path: String, algorithm: String, promise: Promise) {
     try {
       val digest = MessageDigest.getInstance(algorithm)
-      File(path).inputStream().use {
+      openForReading(path).use {
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
         var bytes = it.read(buffer)
         while (bytes >= 0) {
@@ -333,10 +337,11 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   @ReactMethod
   fun readFile(path: String, encoding: String, promise: Promise) {
     try {
+      val data = openForReading(path).use { it.readBytes() }
       if (encoding == "base64") {
-        promise.resolve(Base64.encodeToString(File(path).readBytes(), Base64.DEFAULT))
+        promise.resolve(Base64.encodeToString(data, Base64.DEFAULT))
       } else {
-        promise.resolve(File(path).readText())
+        promise.resolve(data.decodeToString())
       }
     } catch (e: Throwable) {
       promise.reject(e)
@@ -389,6 +394,18 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
       } catch (e: Throwable) {
         promise.reject(e)
       }
+    }
+  }
+
+  /**
+   * Open a file. Supports both standard file system paths and Storage Access
+   * Framework content URIs.
+   */
+  private fun openForReading(path: String): InputStream {
+    return if (path.startsWith("content://")) {
+      reactApplicationContext.contentResolver.openInputStream(Uri.parse(path))!!
+    } else {
+      File(path).inputStream()
     }
   }
 }
