@@ -49,9 +49,9 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
     ioScope.launch {
       try {
         if (encoding == "base64") {
-          File(path).appendBytes(Base64.decode(data, Base64.DEFAULT))
+          parsePathToFile(path).appendBytes(Base64.decode(data, Base64.DEFAULT))
         } else {
-          File(path).appendText(data)
+          parsePathToFile(path).appendText(data)
         }
         promise.resolve(null)
       } catch (e: Throwable) {
@@ -64,7 +64,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun concatFiles(source: String, target: String, promise: Promise) {
     try {
       openForReading(source).use { input ->
-        FileOutputStream(File(target), true).use {
+        FileOutputStream(parsePathToFile(target), true).use {
           promise.resolve(input.copyTo(it).toInt())
         }
       }
@@ -78,7 +78,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
     ioScope.launch {
       try {
         openForReading(source).use { input ->
-          File(target).outputStream().use { input.copyTo(it) }
+          parsePathToFile(target).outputStream().use { input.copyTo(it) }
         }
         promise.resolve(null)
       } catch (e: Throwable) {
@@ -91,7 +91,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun cpAsset(asset: String, target: String, promise: Promise) {
     try {
       reactApplicationContext.assets.open(asset).use { assetStream ->
-        File(target).outputStream().use { assetStream.copyTo(it) }
+        parsePathToFile(target).outputStream().use { assetStream.copyTo(it) }
       }
       promise.resolve(null)
     } catch (e: Throwable) {
@@ -183,7 +183,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun exists(path: String, promise: Promise) {
     ioScope.launch {
       try {
-        promise.resolve(File(path).exists())
+        promise.resolve(parsePathToFile(path).exists())
       } catch (e: Throwable) {
         promise.reject(e)
       }
@@ -232,7 +232,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
         try {
           response.use {
             if (init.hasKey("path")) {
-              File(init.getString("path")!!)
+              parsePathToFile(init.getString("path")!!)
                 .outputStream()
                 .use { response.body()!!.byteStream().copyTo(it) }
             }
@@ -278,7 +278,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun isDir(path: String, promise: Promise) {
     ioScope.launch {
       try {
-        promise.resolve(File(path).isDirectory)
+        promise.resolve(parsePathToFile(path).isDirectory)
       } catch (e: Throwable) {
         promise.reject(e)
       }
@@ -290,7 +290,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
     ioScope.launch {
       try {
         val fileList = Arguments.createArray()
-        File(path).list()?.forEach { fileList.pushString(it) }
+        parsePathToFile(path).list()?.forEach { fileList.pushString(it) }
         promise.resolve(fileList)
       } catch (e: Throwable) {
         promise.reject(e)
@@ -301,13 +301,13 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   @ReactMethod
   fun mkdir(path: String, promise: Promise) {
     ioScope.launch {
-      val file = File(path)
+      val file = parsePathToFile(path)
       try {
         when {
           file.exists() -> {
             promise.reject("EEXIST", "'$path' already exists.")
           }
-          File(path).mkdirs() -> {
+          parsePathToFile(path).mkdirs() -> {
             promise.resolve(null)
           }
           else -> {
@@ -324,8 +324,8 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   fun mv(source: String, target: String, promise: Promise) {
     ioScope.launch {
       try {
-        if (!File(source).renameTo(File(target))) {
-          File(source).also { it.copyTo(File(target), overwrite = true) }.delete()
+        if (!parsePathToFile(source).renameTo(parsePathToFile(target))) {
+          parsePathToFile(source).also { it.copyTo(parsePathToFile(target), overwrite = true) }.delete()
         }
         promise.resolve(null)
       } catch (e: Throwable) {
@@ -351,7 +351,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   @ReactMethod
   fun stat(path: String, promise: Promise) {
     try {
-      val file = File(path)
+      val file = parsePathToFile(path)
       if (file.exists()) {
         promise.resolve(Arguments.makeNativeMap(mapOf(
           "filename" to file.name,
@@ -371,7 +371,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   @ReactMethod
   fun unlink(path: String, promise: Promise) {
     try {
-      if (File(path).delete()) {
+      if (parsePathToFile(path).delete()) {
         promise.resolve(null)
       } else {
         promise.reject("ERR", "Failed to unlink '$path'.")
@@ -386,9 +386,9 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
     ioScope.launch {
       try {
         if (encoding == "base64") {
-          File(path).writeBytes(Base64.decode(data, Base64.DEFAULT))
+          parsePathToFile(path).writeBytes(Base64.decode(data, Base64.DEFAULT))
         } else {
-          File(path).writeText(data)
+          parsePathToFile(path).writeText(data)
         }
         promise.resolve(null)
       } catch (e: Throwable) {
@@ -398,14 +398,30 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   /**
-   * Open a file. Supports both standard file system paths and Storage Access
+   * Open a file. Supports standard file system paths, file URIs and Storage Access
    * Framework content URIs.
    */
   private fun openForReading(path: String): InputStream {
     return if (path.startsWith("content://")) {
       reactApplicationContext.contentResolver.openInputStream(Uri.parse(path))!!
     } else {
-      File(path).inputStream()
+      parsePathToFile(path).inputStream()
+    }
+  }
+
+  /**
+   * Return a File object and do some basic sanitization of the passed path.
+   */
+  private fun parsePathToFile(path: String): File {
+    return if (path.contains("://")) {
+      try {
+        var pathUri = Uri.parse(path)
+        File(pathUri.path)
+      } catch (e: Throwable) {
+        File(path)
+      }
+    } else {
+      File(path)
     }
   }
 }

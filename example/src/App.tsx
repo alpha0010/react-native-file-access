@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { Dirs, FileSystem } from 'react-native-file-access';
 
 export function App() {
@@ -122,6 +129,26 @@ export function App() {
         setInfo((prev) => {
           prev.push({
             key: 'append/concat',
+            value: JSON.stringify(res),
+          });
+          return prev.slice();
+        })
+      );
+
+    const sourcFile =
+      Platform.OS === 'ios'
+        ? `${Dirs.CacheDir}/renamed.txt`
+        : `file://${Dirs.CacheDir}/renamed.txt`;
+
+    FileSystem.unlink(Dirs.CacheDir + '/3.txt')
+      .then(() => console.log('Deleted 3.txt'))
+      .catch(() => console.log('Did not delete 3.txt'))
+      .then(() => FileSystem.cp(sourcFile, Dirs.CacheDir + '/3.txt'))
+      .then(() => FileSystem.readFile(Dirs.CacheDir + '/3.txt'))
+      .then((res) =>
+        setInfo((prev) => {
+          prev.push({
+            key: 'cp(fileUris)',
             value: JSON.stringify(res),
           });
           return prev.slice();
