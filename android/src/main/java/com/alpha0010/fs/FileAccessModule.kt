@@ -415,8 +415,8 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   private fun parsePathToFile(path: String): File {
     return if (path.contains("://")) {
       try {
-        var pathUri = Uri.parse(path)
-        File(pathUri.path)
+        val pathUri = Uri.parse(path)
+        File(pathUri.path!!)
       } catch (e: Throwable) {
         File(path)
       }
