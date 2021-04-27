@@ -88,9 +88,18 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   @ReactMethod
-  fun cpAsset(asset: String, target: String, promise: Promise) {
+  fun cpAsset(asset: String, target: String, type: String, promise: Promise) {
     try {
-      reactApplicationContext.assets.open(asset).use { assetStream ->
+      if (type == "resource") {
+        val id = reactApplicationContext.resources.getIdentifier(
+          asset,
+          null,
+          reactApplicationContext.packageName
+        )
+        reactApplicationContext.resources.openRawResource(id)
+      } else {
+        reactApplicationContext.assets.open(asset)
+      }.use { assetStream ->
         parsePathToFile(target).outputStream().use { assetStream.copyTo(it) }
       }
       promise.resolve(null)

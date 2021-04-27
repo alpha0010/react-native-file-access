@@ -1,3 +1,9 @@
+/**
+ * asset - Android `assets/` folder or iOS main bundle.
+ * resource - Android `res/` folder.
+ */
+export type AssetType = 'asset' | 'resource';
+
 export type Encoding = 'utf8' | 'base64';
 
 export type ExternalDir = 'audio' | 'downloads' | 'images' | 'video';

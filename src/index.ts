@@ -1,6 +1,7 @@
 import { NativeModules, Platform } from 'react-native';
 import { FileAccessNative } from './native';
 import type {
+  AssetType,
   Encoding,
   ExternalDir,
   FetchResult,
@@ -10,6 +11,7 @@ import type {
 } from './types';
 
 export type {
+  AssetType,
   Encoding,
   ExternalDir,
   FetchResult,
@@ -46,9 +48,17 @@ export const FileSystem = {
 
   /**
    * Copy a bundled asset file.
+   *
+   * When using Android asset type 'resource', include the folder, but skip the
+   * file extension. For example use 'raw/foo', for the file 'res/raw/foo.txt'.
+   * When possible, prefer using the 'assets/' folder; files in 'res/' have
+   * naming restrictions imposed by Android.
+   * https://developer.android.com/guide/topics/resources/providing-resources.html#OriginalFiles
    */
-  cpAsset(asset: string, target: string) {
-    return FileAccessNative.cpAsset(asset, target);
+  cpAsset(asset: string, target: string, type: AssetType = 'asset') {
+    return Platform.OS === 'android'
+      ? FileAccessNative.cpAsset(asset, target, type)
+      : FileAccessNative.cpAsset(asset, target);
   },
 
   /**

@@ -44,6 +44,26 @@ export function App() {
         })
       );
 
+    if (Platform.OS === 'android') {
+      FileSystem.cpAsset(
+        'raw/android_resource',
+        Dirs.CacheDir + '/android_resource.txt',
+        'resource'
+      )
+        .then(() =>
+          FileSystem.readFile(Dirs.CacheDir + '/android_resource.txt')
+        )
+        .then((res) =>
+          setInfo((prev) => {
+            prev.push({
+              key: 'readFile(CacheDir/android_resource.txt)',
+              value: JSON.stringify(res),
+            });
+            return prev.slice();
+          })
+        );
+    }
+
     // Disk usage.
     FileSystem.df().then((res) =>
       setInfo((prev) => {

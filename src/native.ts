@@ -1,5 +1,6 @@
 import { NativeModules } from 'react-native';
 import type {
+  AssetType,
   Encoding,
   ExternalDir,
   FetchResult,
@@ -12,7 +13,10 @@ type FileAccessType = {
   appendFile(path: string, data: string, encoding: Encoding): Promise<void>;
   concatFiles(source: string, target: string): Promise<number>;
   cp(source: string, target: string): Promise<void>;
-  cpAsset(asset: string, target: string): Promise<void>;
+  /**
+   * `type` only used on Android.
+   */
+  cpAsset(asset: string, target: string, type?: AssetType): Promise<void>;
   cpExternal(
     source: string,
     targetName: string,

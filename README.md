@@ -44,8 +44,11 @@ const text = await FileSystem.readFile(Dirs.CacheDir + '/test.txt');
 `FileSystem.cp(source: string, target: string): Promise<void>`
 - Copy a file.
 
-`FileSystem.cpAsset(asset: string, target: string): Promise<void>`
+`FileSystem.cpAsset(asset: string, target: string, type?: 'asset' | 'resource'): Promise<void>`
 - Copy a bundled asset file.
+  - Default `type` is `asset`. Prefer this when possible.
+  - `resource` uses the Android `res/` folder, and inherits the associated
+    naming restrictions.
 
 `FileSystem.cpExternal(source: string, targetName: string, dir: 'audio' | 'downloads' | 'images' | 'video'): Promise<void>`
 - Copy a file to an externally controlled location.
