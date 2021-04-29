@@ -33,6 +33,9 @@ type FileAccessType = {
       path?: string;
     }
   ): Promise<FetchResult>;
+  /**
+   * Only defined on iOS.
+   */
   getAppGroupDir(groupName: string): Promise<string>;
   hash(path: string, algorithm: HashAlgorithm): Promise<string>;
   isDir(path: string): Promise<boolean>;
@@ -45,4 +48,10 @@ type FileAccessType = {
   writeFile(path: string, data: string, encoding: Encoding): Promise<void>;
 };
 
+/**
+ * Native module API.
+ *
+ * Most functions are the same as the JS wrapper. However native calls do
+ * not support default parameters.
+ */
 export const FileAccessNative: FileAccessType = NativeModules.RNFileAccess;
