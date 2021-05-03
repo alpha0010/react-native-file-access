@@ -380,7 +380,8 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
   @ReactMethod
   fun unlink(path: String, promise: Promise) {
     try {
-      if (parsePathToFile(path).delete()) {
+      val file = parsePathToFile(path)
+      if (file.exists() && file.deleteRecursively()) {
         promise.resolve(null)
       } else {
         promise.reject("ERR", "Failed to unlink '$path'.")
