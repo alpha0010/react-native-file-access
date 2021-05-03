@@ -130,7 +130,21 @@ class FileAccessModule(reactContext: ReactApplicationContext) : ReactContextBase
             "audio" -> {
               reactApplicationContext.contentResolver.insert(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                ContentValues().apply { put(MediaStore.Audio.Media.DISPLAY_NAME, targetName) }
+                ContentValues().apply {
+                  put(MediaStore.Audio.Media.DISPLAY_NAME, targetName)
+
+                  if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+                    // Older versions require path be specified.
+                    @Suppress("DEPRECATION")
+                    put(
+                      MediaStore.Audio.AudioColumns.DATA,
+                      File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
+                        targetName
+                      ).absolutePath
+                    )
+                  }
+                }
               )
             }
             "images" -> {
