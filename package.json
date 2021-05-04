@@ -1,6 +1,6 @@
 {
   "name": "react-native-file-access",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Filesystem access for React Native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
