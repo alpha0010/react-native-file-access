@@ -14,8 +14,6 @@
     "ios",
     "cpp",
     "react-native-file-access.podspec",
-    "!lib/typescript/example",
-    "!lib/typescript/exampleMacos",
     "!android/build",
     "!ios/build",
     "!**/__tests__",
