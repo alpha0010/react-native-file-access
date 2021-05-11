@@ -156,7 +156,7 @@ export function App() {
       );
 
     const sourcFile =
-      Platform.OS === 'ios'
+      Platform.OS === 'ios' || Platform.OS === 'macos'
         ? `${Dirs.CacheDir}/renamed.txt`
         : `file://${Dirs.CacheDir}/renamed.txt`;
 

@@ -1,5 +1,5 @@
 /**
- * asset - Android `assets/` folder or iOS main bundle.
+ * asset - Android `assets/` folder or iOS/MacOS main bundle.
  * resource - Android `res/` folder.
  */
 export type AssetType = 'asset' | 'resource';
