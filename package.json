@@ -15,6 +15,7 @@
     "cpp",
     "react-native-file-access.podspec",
     "!lib/typescript/example",
+    "!lib/typescript/exampleMacos",
     "!android/build",
     "!ios/build",
     "!**/__tests__",
@@ -28,13 +29,17 @@
     "prepare": "bob build",
     "release": "release-it",
     "example": "yarn --cwd example",
+    "example:macos": "yarn --cwd exampleMacos",
     "pods": "cd example && pod-install --quiet",
-    "bootstrap": "yarn example && yarn && yarn pods"
+    "pods:macos": "cd exampleMacos/macos && pod-install --quiet",
+    "bootstrap": "yarn example && yarn && yarn pods",
+    "bootstrap:macos": "yarn example:macos && yarn && yarn pods:macos"
   },
   "keywords": [
     "react-native",
     "ios",
     "android",
+    "macos",
     "download",
     "file",
     "filesystem",

@@ -34,7 +34,7 @@ type FileAccessType = {
     }
   ): Promise<FetchResult>;
   /**
-   * Only defined on iOS.
+   * Only defined on iOS & MacOS.
    */
   getAppGroupDir(groupName: string): Promise<string>;
   hash(path: string, algorithm: HashAlgorithm): Promise<string>;

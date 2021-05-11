@@ -27,7 +27,7 @@ const text = await FileSystem.readFile(Dirs.CacheDir + '/test.txt');
 - `Dirs.CacheDir`
 - `Dirs.DatabaseDir` (Android only)
 - `Dirs.DocumentDir`
-- `Dirs.LibraryDir` (iOS only)
+- `Dirs.LibraryDir` (iOS & MacOS only)
 - `Dirs.MainBundleDir`
 - `Dirs.SDCardDir` (Android only)
   - Prefer `FileSystem.cpExternal()` when possible.
@@ -35,31 +35,38 @@ const text = await FileSystem.readFile(Dirs.CacheDir + '/test.txt');
 #### Functions.
 
 `FileSystem.appendFile(path: string, data: string, encoding?: 'utf8' | 'base64'): Promise<void>`
+
 - Append content to a file.
   - Default encoding of `data` is assumed utf8.
 
 `FileSystem.concatFiles(source: string, target: string): Promise<number>`
+
 - Append a file to another file. Returns number of bytes written.
 
 `FileSystem.cp(source: string, target: string): Promise<void>`
+
 - Copy a file.
 
 `FileSystem.cpAsset(asset: string, target: string, type?: 'asset' | 'resource'): Promise<void>`
+
 - Copy a bundled asset file.
   - Default `type` is `asset`. Prefer this when possible.
   - `resource` uses the Android `res/` folder, and inherits the associated
     naming restrictions.
 
 `FileSystem.cpExternal(source: string, targetName: string, dir: 'audio' | 'downloads' | 'images' | 'video'): Promise<void>`
+
 - Copy a file to an externally controlled location.
   - On Android API level < 29, may require permission WRITE_EXTERNAL_STORAGE.
   - On iOS, consider using `Dirs.DocumentDir` with `UIFileSharingEnabled`
     and `LSSupportsOpeningDocumentsInPlace` enabled.
 
 `FileSystem.df(): Promise<{ internal_free: number, internal_total: number, external_free?: number, external_total?: number }>`
+
 - Check device available space.
 
 `FileSystem.exists(path: string): Promise<boolean>`
+
 - Check if a path exists.
 
 ```
@@ -74,29 +81,37 @@ type FetchResult = {
   url: string;
 }
 ```
+
 - Save a network request to a file.
 
 `FilesSystem.getAppGroupDir(groupName: string): Promise<string>`
-- Get the directory for your app group (iOS only).
+
+- Get the directory for your app group (iOS & MacOS only).
   - App groups are used on iOS/MacOS for storing content, which is shared between apps.
-  - This is e.g. useful for sharing data between your iOS app and a widget or a watch app.
+  - This is e.g. useful for sharing data between your iOS/MacOS app and a widget or a watch app.
 
 `FilesSystem.hash(path: string, algorithm: 'MD5' | 'SHA-1' | 'SHA-224' | 'SHA-256' | 'SHA-384' | 'SHA-512'): Promise<string>`
+
 - Hash the file content.
 
 `FilesSystem.isDir(path: string): Promise<boolean>`
+
 - Check if a path is a directory.
 
 `FileSystem.ls(path: string): Promise<string[]>`
+
 - List files in a directory.
 
 `FileSystem.mkdir(path: string): Promise<void>`
+
 - Make a new directory.
 
 `FileSystem.mv(source: string, target: string): Promise<void>`
+
 - Move a file.
 
 `FileSystem.readFile(path: string, encoding?: 'utf8' | 'base64'): Promise<string>`
+
 - Read the content of a file.
   - Default encoding of returned string is utf8.
 
@@ -111,12 +126,15 @@ type FileStat = {
   type: 'directory' | 'file';
 }
 ```
+
 - Read file metadata.
 
 `FileSystem.unlink(path: string): Promise<void>`
+
 - Delete a file.
 
 `FileSystem.writeFile(path: string, data: string, encoding?: 'utf8' | 'base64'): Promise<void>`
+
 - Write content to a file.
   - Default encoding of `data` is assumed utf8.
 

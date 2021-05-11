@@ -206,7 +206,7 @@ export const Dirs: {
   /**
    * Persistent app internal data.
    *
-   * iOS only.
+   * iOS & MacOS only.
    */
   LibraryDir?: string;
 
