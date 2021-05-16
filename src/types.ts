@@ -40,6 +40,30 @@ export type FetchResult = {
   url: string;
 };
 
+export type FetchCompleteEvent = {
+  requestId: number;
+  state: 'complete';
+} & FetchResult;
+
+export type FetchErrorEvent = {
+  requestId: number;
+  state: 'error';
+  message: string;
+};
+
+export type FetchProgressEvent = {
+  requestId: number;
+  state: 'progress';
+  bytesRead: number;
+  contentLength: number;
+  done: boolean;
+};
+
+export type FetchEvent =
+  | FetchCompleteEvent
+  | FetchErrorEvent
+  | FetchProgressEvent;
+
 export type FileStat = {
   /**
    * Filename does not include the path.

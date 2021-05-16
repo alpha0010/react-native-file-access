@@ -1,9 +1,10 @@
 import { NativeModules, Platform } from 'react-native';
-import { FileAccessNative } from './native';
+import { FileAccessEventEmitter, FileAccessNative } from './native';
 import type {
   AssetType,
   Encoding,
   ExternalDir,
+  FetchEvent,
   FetchResult,
   FileStat,
   FsStat,
@@ -87,7 +88,7 @@ export const FileSystem = {
   /**
    * Save a network request to a file.
    */
-  fetch(
+  async fetch(
     resource: string,
     init: {
       body?: string;
@@ -97,9 +98,41 @@ export const FileSystem = {
        * Output path.
        */
       path?: string;
-    }
+    },
+    onProgress?: (
+      bytesRead: number,
+      contentLength: number,
+      done: boolean
+    ) => void
   ): Promise<FetchResult> {
-    return FileAccessNative.fetch(resource, init);
+    const requestId = await FileAccessNative.fetch(resource, init);
+    return new Promise((resolve, reject) => {
+      const listener = FileAccessEventEmitter.addListener(
+        'FetchEvent',
+        (event: FetchEvent) => {
+          if (event.requestId !== requestId) {
+            return;
+          }
+
+          if (event.state === 'progress') {
+            onProgress?.(event.bytesRead, event.contentLength, event.done);
+          } else if (event.state === 'error') {
+            listener.remove();
+            reject(new Error(event.message));
+          } else if (event.state === 'complete') {
+            listener.remove();
+            resolve({
+              headers: event.headers,
+              ok: event.ok,
+              redirected: event.redirected,
+              status: event.status,
+              statusText: event.statusText,
+              url: event.url,
+            });
+          }
+        }
+      );
+    });
   },
 
   /**
