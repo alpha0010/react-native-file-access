@@ -1,7 +1,6 @@
 package com.alpha0010.fs
 
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
@@ -12,22 +11,15 @@ import java.io.IOException
 const val FETCH_EVENT = "FetchEvent"
 
 class NetworkHandler(reactContext: ReactContext) {
-  companion object {
-    var nextRequestId = 1
-  }
-
   private val emitter = reactContext.getJSModule(RCTDeviceEventEmitter::class.java)
 
-  fun fetch(resource: String, init: ReadableMap, promise: Promise) {
+  fun fetch(requestId: Int, resource: String, init: ReadableMap) {
     val request = try {
       buildRequest(resource, init)
     } catch (e: Throwable) {
-      promise.reject(e)
+      onFetchError(requestId, e)
       return
     }
-
-    val requestId = nextRequestId++
-    promise.resolve(requestId)
 
     // Share client with RN core library.
     val call = getClient { bytesRead, contentLength, done ->

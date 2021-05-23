@@ -28,9 +28,10 @@ type FileAccessType = {
   df(): Promise<FsStat>;
   exists(path: string): Promise<boolean>;
   /**
-   * Returns a `requestId` for listening to `FetchEvent` events.
+   * Listen to `FetchEvent` events from the `requestId`.
    */
   fetch(
+    requestId: number,
     resource: string,
     init: {
       body?: string;
@@ -38,7 +39,7 @@ type FileAccessType = {
       method?: string;
       path?: string;
     }
-  ): Promise<number>;
+  ): void;
   /**
    * Only defined on iOS & MacOS.
    */

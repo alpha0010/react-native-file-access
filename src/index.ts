@@ -21,6 +21,11 @@ export type {
   HashAlgorithm,
 } from './types';
 
+/**
+ * ID tracking next fetch request.
+ */
+let nextRequestId = 1;
+
 export const FileSystem = {
   /**
    * Append content to a file.
@@ -105,7 +110,7 @@ export const FileSystem = {
       done: boolean
     ) => void
   ): Promise<FetchResult> {
-    const requestId = await FileAccessNative.fetch(resource, init);
+    const requestId = nextRequestId++;
     return new Promise((resolve, reject) => {
       const listener = FileAccessEventEmitter.addListener(
         'FetchEvent',
@@ -132,6 +137,7 @@ export const FileSystem = {
           }
         }
       );
+      FileAccessNative.fetch(requestId, resource, init);
     });
   },
 

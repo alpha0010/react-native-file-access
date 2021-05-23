@@ -211,8 +211,8 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun fetch(resource: String, init: ReadableMap, promise: Promise) {
-    NetworkHandler(reactApplicationContext).fetch(resource, init, promise)
+  fun fetch(requestId: Int, resource: String, init: ReadableMap) {
+    NetworkHandler(reactApplicationContext).fetch(requestId, resource, init)
   }
 
   @ReactMethod
