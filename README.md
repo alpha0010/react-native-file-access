@@ -70,7 +70,11 @@ const text = await FileSystem.readFile(Dirs.CacheDir + '/test.txt');
 - Check if a path exists.
 
 ```
-FilesSystem.fetch(resource: string, init: { body?: string, headers?: { [key: string]: string }, method?: string, path?: string }): Promise<FetchResult>
+FilesSystem.fetch(
+  resource: string,
+  init: { body?: string, headers?: { [key: string]: string }, method?: string, path?: string },
+  onProgress?: (bytesRead: number, contentLength: number, done: boolean) => void
+): Promise<FetchResult>
 
 type FetchResult = {
   headers: { [key: string]: string };
@@ -83,6 +87,9 @@ type FetchResult = {
 ```
 
 - Save a network request to a file.
+  - `onProgress` - Optional callback to listen to download progress. Events
+    are rate limitted, so do not rely on `done` becoming `true`.
+    `contentLength` is only accurate if the server sends the correct headers.
 
 `FilesSystem.getAppGroupDir(groupName: string): Promise<string>`
 
