@@ -32,10 +32,9 @@ RCT_EXTERN_METHOD(exists:(NSString *)path
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(fetch:(NSString *)resource
-                 withConfig:(NSDictionary *)config
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(fetch:(nonnull NSNumber *)requestId
+                 withResource:(NSString *)resource
+                 withConfig:(NSDictionary *)config)
 
 RCT_EXTERN_METHOD(getAppGroupDir:(NSString *)groupName
                  withResolver:(RCTPromiseResolveBlock)resolve

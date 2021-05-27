@@ -1,18 +1,22 @@
 import CommonCrypto
 
 @objc(FileAccess)
-class FileAccess: NSObject {
-    @objc static func requiresMainQueueSetup() -> Bool {
+class FileAccess: RCTEventEmitter {
+    @objc override static func requiresMainQueueSetup() -> Bool {
         return false
     }
 
-    @objc func constantsToExport() -> NSObject {
+    @objc override func constantsToExport() -> [AnyHashable : Any] {
         return [
             "CacheDir": NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!,
             "DocumentDir": NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!,
             "LibraryDir": NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first!,
             "MainBundleDir": Bundle.main.bundlePath
-        ] as NSObject
+        ]
+    }
+
+    @objc override func supportedEvents() -> [String] {
+        return [NetworkHandler.FETCH_EVENT]
     }
 
     @objc(appendFile:withData:withEncoding:withResolver:withRejecter:)
@@ -123,60 +127,10 @@ class FileAccess: NSObject {
         resolve(FileManager.default.fileExists(atPath: path))
     }
 
-    @objc(fetch:withConfig:withResolver:withRejecter:)
-    func fetch(resource: String, config: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        guard let url = URL(string: resource) else {
-            reject("ERR", "'\(resource)' is not a url.", nil)
-            return
-        }
-        var request = URLRequest(url: url)
-        if let method = config["method"] as? String {
-            request.httpMethod = method
-        }
-        if let body = config["body"] as? String {
-            request.httpBody = body.data(using: .utf8)
-        }
-        if let headers = config["headers"] as? NSDictionary {
-            for (key, value) in headers {
-                if let headerName = key as? String, let headerValue = value as? String {
-                    request.addValue(headerValue, forHTTPHeaderField: headerName)
-                }
-            }
-        }
-
-        let downloadTask = URLSession.shared.downloadTask(with: request) {
-            locationOrNil, responseOrNil, errorOrNil in
-
-            if let requestError = errorOrNil {
-                reject("ERR", "Failed to fetch '\(resource)'.", requestError)
-                return
-            }
-            guard let location = locationOrNil, let response = responseOrNil as? HTTPURLResponse else {
-                reject("ERR", "Failed to fetch '\(resource)'.", nil)
-                return
-            }
-
-            if let path = config["path"] as? String {
-                let pathUrl = URL(fileURLWithPath: path)
-                try? FileManager.default.removeItem(at: pathUrl)
-                do {
-                    try FileManager.default.moveItem(at: location, to: pathUrl)
-                } catch {
-                    reject("ERR", "Failed to save '\(resource)' to '\(path)'.", error)
-                    return
-                }
-            }
-
-            resolve([
-                "headers": response.allHeaderFields,
-                "ok": response.statusCode >= 200 && response.statusCode < 300,
-                "redirected": false, // TODO: Determine actual value.
-                "status": response.statusCode,
-                "statusText": HTTPURLResponse.localizedString(forStatusCode: response.statusCode),
-                "url": response.url?.absoluteString ?? ""
-            ])
-        }
-        downloadTask.resume()
+    @objc(fetch:withResource:withConfig:)
+    func fetch(requestId: NSNumber, resource: String, config: NSDictionary) -> Void {
+        NetworkHandler(requestId: requestId, emitter: self)
+            .fetch(resource: resource, config: config)
     }
 
     @objc(getAppGroupDir:withResolver:withRejecter:)
