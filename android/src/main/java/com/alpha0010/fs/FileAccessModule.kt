@@ -301,7 +301,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     try {
       val data = openForReading(path).use { it.readBytes() }
       if (encoding == "base64") {
-        promise.resolve(Base64.encodeToString(data, Base64.DEFAULT))
+        promise.resolve(Base64.encodeToString(data, Base64.NO_WRAP))
       } else {
         promise.resolve(data.decodeToString())
       }
