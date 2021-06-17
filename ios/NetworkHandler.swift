@@ -20,7 +20,7 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
         }
 
         currentUrl = resource
-        destination = config["path"] as? String
+        destination = (config["path"] as? String)?.path()
 
         var request = URLRequest(url: url)
         if let method = config["method"] as? String {

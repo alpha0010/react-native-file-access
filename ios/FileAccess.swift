@@ -22,7 +22,7 @@ class FileAccess: RCTEventEmitter {
     @objc(appendFile:withData:withEncoding:withResolver:withRejecter:)
     func appendFile(path: String, data: String, encoding: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         guard let encodedData = encoding == "base64" ? Data(base64Encoded: data) : data.data(using: .utf8),
-              let handle = FileHandle(forWritingAtPath: path) else {
+              let handle = FileHandle(forWritingAtPath: path.path()) else {
             reject("ERR", "Failed to append to '\(path)'.", nil)
             return
         }
@@ -35,7 +35,7 @@ class FileAccess: RCTEventEmitter {
 
     @objc(concatFiles:withTarget:withResolver:withRejecter:)
     func concatFiles(source: String, target: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        guard let input = InputStream(fileAtPath: source), let output = OutputStream(toFileAtPath: target, append: true) else {
+        guard let input = InputStream(fileAtPath: source.path()), let output = OutputStream(toFileAtPath: target.path(), append: true) else {
             reject("ERR", "Failed to concat '\(source)' to '\(target)'.", nil)
             return
         }
@@ -60,7 +60,7 @@ class FileAccess: RCTEventEmitter {
     @objc(cp:withTarget:withResolver:withRejecter:)
     func cp(source: String, target: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
-            try FileManager.default.copyItem(atPath: source, toPath: target)
+            try FileManager.default.copyItem(atPath: source.path(), toPath: target.path())
             resolve(nil)
         } catch {
             reject("ERR", "Failed to copy '\(source)' to '\(target)'.", error)
@@ -75,7 +75,7 @@ class FileAccess: RCTEventEmitter {
         }
 
         do {
-            try FileManager.default.copyItem(atPath: assetPath, toPath: target)
+            try FileManager.default.copyItem(atPath: assetPath, toPath: target.path())
             resolve(nil)
         } catch {
             reject("ERR", "Failed to copy '\(asset)' to '\(target)'.", error)
@@ -103,7 +103,7 @@ class FileAccess: RCTEventEmitter {
 
         let targetUrl = URL(fileURLWithPath: targetFolder, isDirectory: true)
             .appendingPathComponent(targetName, isDirectory: false)
-        cp(source: source, target: targetUrl.path, resolve: resolve, reject: reject)
+        cp(source: source.path(), target: targetUrl.path, resolve: resolve, reject: reject)
     }
 
     @objc(df:withRejecter:)
@@ -124,7 +124,7 @@ class FileAccess: RCTEventEmitter {
 
     @objc(exists:withResolver:withRejecter:)
     func exists(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        resolve(FileManager.default.fileExists(atPath: path))
+        resolve(FileManager.default.fileExists(atPath: path.path()))
     }
 
     @objc(fetch:withResource:withConfig:)
@@ -145,7 +145,7 @@ class FileAccess: RCTEventEmitter {
 
     @objc(hash:withAlgorithm:withResolver:withRejecter:)
     func hash(path: String, algorithm: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        guard let data = NSData(contentsOfFile: path) else {
+        guard let data = NSData(contentsOfFile: path.path()) else {
             reject("ERR", "Failed to read '\(path)'.", nil)
             return
         }
@@ -183,14 +183,14 @@ class FileAccess: RCTEventEmitter {
 
     @objc(isDir:withResolver:withRejecter:)
     func isDir(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        let status = checkIfIsDirectory(path: path)
+        let status = checkIfIsDirectory(path: path.path())
         resolve(status.exists && status.isDirectory)
     }
 
     @objc(ls:withResolver:withRejecter:)
     func ls(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
-            try resolve(FileManager.default.contentsOfDirectory(atPath: path))
+            try resolve(FileManager.default.contentsOfDirectory(atPath: path.path()))
         } catch {
             reject("ERR", "Failed to list '\(path)'.", error)
         }
@@ -199,7 +199,7 @@ class FileAccess: RCTEventEmitter {
     @objc(mkdir:withResolver:withRejecter:)
     func mkdir(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
-            try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(atPath: path.path(), withIntermediateDirectories: true, attributes: nil)
             resolve(nil)
         } catch {
             reject("ERR", "Failed to create directory '\(path)'.", error)
@@ -209,8 +209,8 @@ class FileAccess: RCTEventEmitter {
     @objc(mv:withTarget:withResolver:withRejecter:)
     func mv(source: String, target: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
-            try? FileManager.default.removeItem(atPath: target)
-            try FileManager.default.moveItem(atPath: source, toPath: target)
+            try? FileManager.default.removeItem(atPath: target.path())
+            try FileManager.default.moveItem(atPath: source.path(), toPath: target.path())
             resolve(nil)
         } catch {
             reject("ERR", "Failed to rename '\(source)' to '\(target)'.", error)
@@ -221,10 +221,10 @@ class FileAccess: RCTEventEmitter {
     func readFile(path: String, encoding: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
             if encoding == "base64" {
-                let binaryData = try Data(contentsOf: URL(fileURLWithPath: path))
+                let binaryData = try Data(contentsOf: URL(fileURLWithPath: path.path()))
                 resolve(binaryData.base64EncodedString())
             } else {
-                try resolve(String(contentsOfFile: path))
+                try resolve(String(contentsOfFile: path.path()))
             }
         } catch {
             reject("ERR", "Failed to read '\(path)'.", error)
@@ -234,8 +234,8 @@ class FileAccess: RCTEventEmitter {
     @objc(stat:withResolver:withRejecter:)
     func stat(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
-            let pathUrl = URL(fileURLWithPath: path)
-            let attrs = try FileManager.default.attributesOfItem(atPath: path)
+            let pathUrl = URL(fileURLWithPath: path.path())
+            let attrs = try FileManager.default.attributesOfItem(atPath: path.path())
             resolve([
                 "filename": pathUrl.lastPathComponent,
                 "lastModified": 1000 * (attrs[.modificationDate] as! NSDate).timeIntervalSince1970,
@@ -251,7 +251,7 @@ class FileAccess: RCTEventEmitter {
     @objc(unlink:withResolver:withRejecter:)
     func unlink(path: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
-            try FileManager.default.removeItem(atPath: path)
+            try FileManager.default.removeItem(atPath: path.path())
             resolve(nil)
         } catch {
             reject("ERR", "Failed to unlink '\(path)'.", error)
@@ -262,10 +262,10 @@ class FileAccess: RCTEventEmitter {
     func writeFile(path: String, data: String, encoding: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         do {
             if encoding == "base64" {
-                let pathUrl = URL(fileURLWithPath: path)
+                let pathUrl = URL(fileURLWithPath: path.path())
                 try Data(base64Encoded: data)!.write(to: pathUrl)
             } else {
-                try data.write(toFile: path, atomically: false, encoding: .utf8)
+                try data.write(toFile: path.path(), atomically: false, encoding: .utf8)
             }
             resolve(nil)
         } catch {
@@ -275,7 +275,7 @@ class FileAccess: RCTEventEmitter {
 
     private func checkIfIsDirectory(path: String) -> (exists: Bool, isDirectory: Bool) {
         var isDir: ObjCBool = false
-        let exists = FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
+        let exists = FileManager.default.fileExists(atPath: path.path(), isDirectory: &isDir)
         let isDirectory = isDir.boolValue
         return (exists, isDirectory)
     }
