@@ -219,6 +219,17 @@ export const FileSystem = {
   writeFile(path: string, data: string, encoding: Encoding = 'utf8') {
     return FileAccessNative.writeFile(path, data, encoding);
   },
+
+  /**
+   * Zip a file or directory.
+   *
+   * Note: the resulting archive will always contain a single top level
+   * directory, under which all files will be located. Implementation uses
+   * only platform api, which has this limitation on iOS.
+   */
+  zip(source: string, target: string) {
+    return FileAccessNative.zip(source, target);
+  },
 };
 
 /**

@@ -273,10 +273,68 @@ class FileAccess: RCTEventEmitter {
         }
     }
 
+    @objc(zip:withTarget:withResolver:withRejecter:)
+    func zip(source: String, target: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        let status = checkIfIsDirectory(path: source)
+        guard status.exists else {
+            reject("ENOENT", "File/folder \(source) not found.", nil)
+            return
+        }
+
+        var sourceDir = source
+        if !status.isDirectory {
+            guard let tmpDir = makeTempDir(prefix: "zip-") else {
+                reject("ERR", "Failed to create temp folder to zip \(source).", nil)
+                return
+            }
+            sourceDir = tmpDir
+            do {
+                let copyToUrl = URL(fileURLWithPath: sourceDir)
+                    .appendingPathComponent(URL(fileURLWithPath: source.path()).lastPathComponent)
+                try FileManager.default.copyItem(atPath: source.path(), toPath: copyToUrl.path)
+            } catch {
+                reject("ERR", error.localizedDescription, error)
+                try? FileManager.default.removeItem(atPath: sourceDir)
+                return
+            }
+        }
+
+        var zipErr: NSError?
+        var copyErr: Error?
+        NSFileCoordinator().coordinate(readingItemAt: URL(fileURLWithPath: sourceDir), options: .forUploading, error: &zipErr) { zippedURL in
+            do {
+                try FileManager.default.copyItem(at: zippedURL, to: URL(fileURLWithPath: target))
+            } catch let err {
+                copyErr = err
+            }
+        }
+
+        if !status.isDirectory {
+            // Folder was temporary.
+            try? FileManager.default.removeItem(atPath: sourceDir)
+        }
+
+        guard zipErr == nil, copyErr == nil else {
+            reject("ERR", zipErr?.localizedDescription ?? copyErr?.localizedDescription, zipErr ?? copyErr)
+            return
+        }
+
+        resolve(nil)
+    }
+
     private func checkIfIsDirectory(path: String) -> (exists: Bool, isDirectory: Bool) {
         var isDir: ObjCBool = false
         let exists = FileManager.default.fileExists(atPath: path.path(), isDirectory: &isDir)
         let isDirectory = isDir.boolValue
         return (exists, isDirectory)
+    }
+
+    private func makeTempDir(prefix: String) -> String? {
+        let templateStr = FileManager.default.temporaryDirectory.appendingPathComponent("\(prefix)XXXXXX").path
+        guard let tmpDirData = templateStr.mutableCString(using: .utf8),
+              mkdtemp(tmpDirData.mutableBytes.assumingMemoryBound(to: CChar.self)) != nil else {
+            return nil
+        }
+        return String(data: tmpDirData as Data, encoding: .utf8)
     }
 }

@@ -14,6 +14,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.security.MessageDigest
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class FileAccessModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
@@ -356,6 +358,34 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
           parsePathToFile(path).writeBytes(Base64.decode(data, Base64.DEFAULT))
         } else {
           parsePathToFile(path).writeText(data)
+        }
+        promise.resolve(null)
+      } catch (e: Throwable) {
+        promise.reject(e)
+      }
+    }
+  }
+
+  @ReactMethod
+  fun zip(source: String, target: String, promise: Promise) {
+    ioScope.launch {
+      try {
+        val inDir = parsePathToFile(source)
+        var inPrefix = inDir.parentFile?.absolutePath ?: inDir.absolutePath
+        if (inDir.isFile) {
+          inPrefix = inDir.parentFile?.parentFile?.absolutePath ?: inPrefix
+        }
+        val outZip = parsePathToFile(target)
+        ZipOutputStream(outZip.outputStream()).use { output ->
+          for (file in inDir.walkTopDown()) {
+            val entryName = file.absolutePath.removePrefix(inPrefix).removePrefix("/")
+            if (file.isDirectory) {
+              output.putNextEntry(ZipEntry("$entryName/"))
+            } else {
+              output.putNextEntry(ZipEntry(entryName))
+              file.inputStream().use { it.copyTo(output) }
+            }
+          }
         }
         promise.resolve(null)
       } catch (e: Throwable) {

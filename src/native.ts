@@ -53,6 +53,7 @@ type FileAccessType = {
   stat(path: string): Promise<FileStat>;
   unlink(path: string): Promise<void>;
   writeFile(path: string, data: string, encoding: Encoding): Promise<void>;
+  zip(source: string, target: string): Promise<void>;
 };
 
 /**
