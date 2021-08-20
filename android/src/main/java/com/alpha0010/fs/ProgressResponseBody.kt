@@ -4,7 +4,7 @@ import okhttp3.ResponseBody
 import okio.Buffer
 import okio.BufferedSource
 import okio.ForwardingSource
-import okio.Okio
+import okio.buffer
 
 typealias ProgressListener = (bytesRead: Long, contentLength: Long, done: Boolean) -> Unit
 
@@ -22,7 +22,7 @@ class ProgressResponseBody(
   override fun contentLength() = responseBody.contentLength()
 
   override fun source(): BufferedSource {
-    return bufferedSource ?: Okio.buffer(object : ForwardingSource(responseBody.source()) {
+    return bufferedSource ?: object : ForwardingSource(responseBody.source()) {
       var totalBytesRead = 0L
 
       override fun read(sink: Buffer, byteCount: Long): Long {
@@ -38,6 +38,6 @@ class ProgressResponseBody(
 
         return bytesRead
       }
-    }).also { bufferedSource = it }
+    }.buffer().also { bufferedSource = it }
   }
 }

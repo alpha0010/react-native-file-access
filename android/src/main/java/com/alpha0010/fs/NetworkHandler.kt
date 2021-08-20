@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.facebook.react.modules.network.OkHttpClientProvider
 import okhttp3.*
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
 const val FETCH_EVENT = "FetchEvent"
@@ -46,10 +47,10 @@ class NetworkHandler(reactContext: ReactContext) {
             if (init.hasKey("path")) {
               parsePathToFile(init.getString("path")!!)
                 .outputStream()
-                .use { response.body()!!.byteStream().copyTo(it) }
+                .use { response.body!!.byteStream().copyTo(it) }
             }
 
-            val headers = response.headers().names().map { it to response.header(it) }
+            val headers = response.headers.names().map { it to response.header(it) }
             emitter.emit(
               FETCH_EVENT, Arguments.makeNativeMap(
                 mapOf(
@@ -58,9 +59,9 @@ class NetworkHandler(reactContext: ReactContext) {
                   "headers" to Arguments.makeNativeMap(headers.toMap()),
                   "ok" to response.isSuccessful,
                   "redirected" to response.isRedirect,
-                  "status" to response.code(),
-                  "statusText" to response.message(),
-                  "url" to response.request().url().toString()
+                  "status" to response.code,
+                  "statusText" to response.message,
+                  "url" to response.request.url.toString()
                 )
               )
             )
@@ -82,7 +83,7 @@ class NetworkHandler(reactContext: ReactContext) {
       if (init.hasKey("body")) {
         builder.method(
           init.getString("method")!!,
-          RequestBody.create(null, init.getString("body")!!)
+          init.getString("body")!!.toRequestBody(null)
         )
       } else {
         builder.method(init.getString("method")!!, null)
@@ -104,7 +105,7 @@ class NetworkHandler(reactContext: ReactContext) {
       .newBuilder()
       .addNetworkInterceptor { chain ->
         val originalResponse = chain.proceed(chain.request())
-        originalResponse.body()
+        originalResponse.body
           ?.let { originalResponse.newBuilder().body(ProgressResponseBody(it, listener)).build() }
           ?: originalResponse
       }

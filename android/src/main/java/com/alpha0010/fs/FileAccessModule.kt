@@ -41,6 +41,14 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     )
   }
 
+  // https://github.com/facebook/react-native/blob/v0.65.1/Libraries/EventEmitter/NativeEventEmitter.js#L22
+  @ReactMethod
+  fun addListener(eventType: String) = Unit
+
+  // https://github.com/facebook/react-native/blob/v0.65.1/Libraries/EventEmitter/NativeEventEmitter.js#L23
+  @ReactMethod
+  fun removeListeners(count: Int) = Unit
+
   @ReactMethod
   fun appendFile(path: String, data: String, encoding: String, promise: Promise) {
     ioScope.launch {
@@ -113,7 +121,12 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
           if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             reactApplicationContext.contentResolver.insert(
               MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-              ContentValues().apply { put(MediaStore.Downloads.DISPLAY_NAME, targetName) }
+              ContentValues().apply {
+                put(
+                  MediaStore.Downloads.DISPLAY_NAME,
+                  targetName
+                )
+              }
             )?.let { reactApplicationContext.contentResolver.openOutputStream(it) }
           } else {
             @Suppress("DEPRECATION")
@@ -136,7 +149,9 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
                     put(
                       MediaStore.Audio.AudioColumns.DATA,
                       File(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
+                        Environment.getExternalStoragePublicDirectory(
+                          Environment.DIRECTORY_MUSIC
+                        ),
                         targetName
                       ).absolutePath
                     )
@@ -147,13 +162,23 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
             "images" -> {
               reactApplicationContext.contentResolver.insert(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                ContentValues().apply { put(MediaStore.Images.Media.DISPLAY_NAME, targetName) }
+                ContentValues().apply {
+                  put(
+                    MediaStore.Images.Media.DISPLAY_NAME,
+                    targetName
+                  )
+                }
               )
             }
             "video" -> {
               reactApplicationContext.contentResolver.insert(
                 MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                ContentValues().apply { put(MediaStore.Video.Media.DISPLAY_NAME, targetName) }
+                ContentValues().apply {
+                  put(
+                    MediaStore.Video.Media.DISPLAY_NAME,
+                    targetName
+                  )
+                }
               )
             }
             else -> null
@@ -286,7 +311,12 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     ioScope.launch {
       try {
         if (!parsePathToFile(source).renameTo(parsePathToFile(target))) {
-          parsePathToFile(source).also { it.copyTo(parsePathToFile(target), overwrite = true) }
+          parsePathToFile(source).also {
+            it.copyTo(
+              parsePathToFile(target),
+              overwrite = true
+            )
+          }
             .delete()
         }
         promise.resolve(null)

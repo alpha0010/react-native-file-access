@@ -12,6 +12,10 @@ API 30 or higher.
 npm install react-native-file-access
 ```
 
+### Compatibility
+
+For React Native 0.64 and older, use 1.x.x. For React Native 0.65+, use 2.x.x.
+
 ## Usage
 
 ```js
