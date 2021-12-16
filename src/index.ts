@@ -5,10 +5,13 @@ import type {
   Encoding,
   ExternalDir,
   FetchEvent,
+  FetchInit,
   FetchResult,
   FileStat,
   FsStat,
   HashAlgorithm,
+  ManagedFetchResult,
+  ProgressListener,
 } from './types';
 
 export type {
@@ -25,6 +28,42 @@ export type {
  * ID tracking next fetch request.
  */
 let nextRequestId = 1;
+
+/**
+ * Process fetch events for the request.
+ */
+function registerFetchListener(
+  requestId: number,
+  resolve: (res: FetchResult) => void,
+  reject: (e: Error) => void,
+  onProgress?: ProgressListener
+) {
+  const listener = FileAccessEventEmitter.addListener(
+    'FetchEvent',
+    (event: FetchEvent) => {
+      if (event.requestId !== requestId) {
+        return;
+      }
+
+      if (event.state === 'progress') {
+        onProgress?.(event.bytesRead, event.contentLength, event.done);
+      } else if (event.state === 'error') {
+        listener.remove();
+        reject(new Error(event.message));
+      } else if (event.state === 'complete') {
+        listener.remove();
+        resolve({
+          headers: event.headers,
+          ok: event.ok,
+          redirected: event.redirected,
+          status: event.status,
+          statusText: event.statusText,
+          url: event.url,
+        });
+      }
+    }
+  );
+}
 
 export const FileSystem = {
   /**
@@ -95,50 +134,32 @@ export const FileSystem = {
    */
   async fetch(
     resource: string,
-    init: {
-      body?: string;
-      headers?: { [key: string]: string };
-      method?: string;
-      /**
-       * Output path.
-       */
-      path?: string;
-    },
-    onProgress?: (
-      bytesRead: number,
-      contentLength: number,
-      done: boolean
-    ) => void
+    init: FetchInit,
+    onProgress?: ProgressListener
   ): Promise<FetchResult> {
     const requestId = nextRequestId++;
     return new Promise((resolve, reject) => {
-      const listener = FileAccessEventEmitter.addListener(
-        'FetchEvent',
-        (event: FetchEvent) => {
-          if (event.requestId !== requestId) {
-            return;
-          }
-
-          if (event.state === 'progress') {
-            onProgress?.(event.bytesRead, event.contentLength, event.done);
-          } else if (event.state === 'error') {
-            listener.remove();
-            reject(new Error(event.message));
-          } else if (event.state === 'complete') {
-            listener.remove();
-            resolve({
-              headers: event.headers,
-              ok: event.ok,
-              redirected: event.redirected,
-              status: event.status,
-              statusText: event.statusText,
-              url: event.url,
-            });
-          }
-        }
-      );
+      registerFetchListener(requestId, resolve, reject, onProgress);
       FileAccessNative.fetch(requestId, resource, init);
     });
+  },
+
+  /**
+   * Save a network request to a file.
+   */
+  fetchManaged(
+    resource: string,
+    init: FetchInit,
+    onProgress?: ProgressListener
+  ): ManagedFetchResult {
+    const requestId = nextRequestId++;
+    return {
+      cancel: () => FileAccessNative.cancelFetch(requestId),
+      result: new Promise((resolve, reject) => {
+        registerFetchListener(requestId, resolve, reject, onProgress);
+        FileAccessNative.fetch(requestId, resource, init);
+      }),
+    };
   },
 
   /**

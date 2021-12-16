@@ -8,6 +8,16 @@ export type Encoding = 'utf8' | 'base64';
 
 export type ExternalDir = 'audio' | 'downloads' | 'images' | 'video';
 
+export type FetchInit = {
+  body?: string;
+  headers?: { [key: string]: string };
+  method?: string;
+  /**
+   * Output path.
+   */
+  path?: string;
+};
+
 export type FetchResult = {
   /**
    * Response HTTP headers.
@@ -98,3 +108,14 @@ export type HashAlgorithm =
   | 'SHA-256'
   | 'SHA-384'
   | 'SHA-512';
+
+export type ManagedFetchResult = {
+  cancel: () => Promise<void>;
+  result: Promise<FetchResult>;
+};
+
+export type ProgressListener = (
+  bytesRead: number,
+  contentLength: number,
+  done: boolean
+) => void;

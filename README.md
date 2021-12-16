@@ -92,8 +92,24 @@ type FetchResult = {
 
 - Save a network request to a file.
   - `onProgress` - Optional callback to listen to download progress. Events
-    are rate limitted, so do not rely on `done` becoming `true`.
+    are rate limited, so do not rely on `done` becoming `true`.
     `contentLength` is only accurate if the server sends the correct headers.
+
+```
+FilesSystem.fetchManaged(
+  resource: string,
+  init: { body?: string, headers?: { [key: string]: string }, method?: string, path?: string },
+  onProgress?: (bytesRead: number, contentLength: number, done: boolean) => void
+): ManagedFetchResult
+
+type ManagedFetchResult = {
+  cancel: () => Promise<void>;
+  result: Promise<FetchResult>;
+}
+```
+
+- Save a network request to a file.
+  - Similar to `fetch()`, with the option to cancel before completion.
 
 `FilesSystem.getAppGroupDir(groupName: string): Promise<string>`
 
@@ -164,7 +180,7 @@ and latest best practices. For a more established library, consider:
 - [expo-file-system](https://docs.expo.io/versions/latest/sdk/filesystem/)
   - Well supported, a good option if already using Expo.
 - [rn-fetch-blob](https://github.com/joltup/rn-fetch-blob)
-  - Popuplar, and often a dependency of other libraries.
+  - Popular, and often a dependency of other libraries.
   - Officially unmaintained, with known bugs.
 - [react-native-fs](https://github.com/itinance/react-native-fs)
   - Large feature set.

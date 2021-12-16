@@ -14,6 +14,7 @@ export const FileAccessEventEmitter = new NativeEventEmitter(
 
 type FileAccessType = {
   appendFile(path: string, data: string, encoding: Encoding): Promise<void>;
+  cancelFetch(requestId: number): Promise<void>;
   concatFiles(source: string, target: string): Promise<number>;
   cp(source: string, target: string): Promise<void>;
   /**

@@ -14,12 +14,13 @@ const val FETCH_EVENT = "FetchEvent"
 class NetworkHandler(reactContext: ReactContext) {
   private val emitter = reactContext.getJSModule(RCTDeviceEventEmitter::class.java)
 
-  fun fetch(requestId: Int, resource: String, init: ReadableMap) {
+  fun fetch(requestId: Int, resource: String, init: ReadableMap, onComplete: () -> Unit): Call? {
     val request = try {
       buildRequest(resource, init)
     } catch (e: Throwable) {
+      onComplete()
       onFetchError(requestId, e)
-      return
+      return null
     }
 
     // Share client with RN core library.
@@ -38,6 +39,7 @@ class NetworkHandler(reactContext: ReactContext) {
     }.newCall(request)
     call.enqueue(object : Callback {
       override fun onFailure(call: Call, e: IOException) {
+        onComplete()
         onFetchError(requestId, e)
       }
 
@@ -50,6 +52,7 @@ class NetworkHandler(reactContext: ReactContext) {
                 .use { response.body!!.byteStream().copyTo(it) }
             }
 
+            onComplete()
             val headers = response.headers.names().map { it to response.header(it) }
             emitter.emit(
               FETCH_EVENT, Arguments.makeNativeMap(
@@ -67,10 +70,13 @@ class NetworkHandler(reactContext: ReactContext) {
             )
           }
         } catch (e: Throwable) {
+          onComplete()
           onFetchError(requestId, e)
         }
       }
     })
+
+    return call
   }
 
   private fun buildRequest(resource: String, init: ReadableMap): Request {

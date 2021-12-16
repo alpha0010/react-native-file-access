@@ -1,7 +1,10 @@
 import CommonCrypto
+import Foundation
 
 @objc(FileAccess)
 class FileAccess: RCTEventEmitter {
+    private let fetchCalls = NSMapTable<NSNumber, URLSessionDownloadTask>.init(keyOptions: .copyIn, valueOptions: .weakMemory)
+
     @objc override static func requiresMainQueueSetup() -> Bool {
         return false
     }
@@ -30,6 +33,15 @@ class FileAccess: RCTEventEmitter {
         handle.seekToEndOfFile()
         handle.write(encodedData)
         handle.closeFile()
+        resolve(nil)
+    }
+
+    @objc(cancelFetch:withResolver:withRejecter:)
+    func cancelFetch(requestId: NSNumber, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        if let call = fetchCalls.object(forKey: requestId) {
+            fetchCalls.removeObject(forKey: requestId)
+            call.cancel()
+        }
         resolve(nil)
     }
 
@@ -129,8 +141,12 @@ class FileAccess: RCTEventEmitter {
 
     @objc(fetch:withResource:withConfig:)
     func fetch(requestId: NSNumber, resource: String, config: NSDictionary) -> Void {
-        NetworkHandler(requestId: requestId, emitter: self)
-            .fetch(resource: resource, config: config)
+        let handler = NetworkHandler(requestId: requestId, emitter: self) {
+            self.fetchCalls.removeObject(forKey: requestId)
+        }
+        if let call = handler.fetch(resource: resource, config: config) {
+            fetchCalls.setObject(call, forKey: requestId)
+        }
     }
 
     @objc(getAppGroupDir:withResolver:withRejecter:)

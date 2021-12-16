@@ -10,13 +10,16 @@ import com.facebook.react.bridge.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.Call
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.lang.ref.WeakReference
 import java.security.MessageDigest
 
 class FileAccessModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
+  private val fetchCalls = mutableMapOf<Int, WeakReference<Call>>()
   private val ioScope = CoroutineScope(Dispatchers.IO)
 
   override fun getName(): String {
@@ -63,6 +66,12 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
         promise.reject(e)
       }
     }
+  }
+
+  @ReactMethod
+  fun cancelFetch(requestId: Int, promise: Promise) {
+    fetchCalls.remove(requestId)?.get()?.cancel()
+    promise.resolve(null)
   }
 
   @ReactMethod
@@ -237,7 +246,9 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun fetch(requestId: Int, resource: String, init: ReadableMap) {
-    NetworkHandler(reactApplicationContext).fetch(requestId, resource, init)
+    NetworkHandler(reactApplicationContext).fetch(requestId, resource, init) {
+      fetchCalls.remove(requestId)
+    }?.let { fetchCalls[requestId] = WeakReference(it) }
   }
 
   @ReactMethod

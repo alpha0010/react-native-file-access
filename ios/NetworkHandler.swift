@@ -6,17 +6,20 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
     private var destination: String?
     private let emitter: RCTEventEmitter
     private var lastEventTime = Date.distantPast
+    private let onComplete: () -> Void
     private let requestId: Int
 
-    init(requestId: NSNumber, emitter: RCTEventEmitter) {
+    init(requestId: NSNumber, emitter: RCTEventEmitter, onComplete: @escaping () -> Void) {
         self.emitter = emitter
         self.requestId = requestId.intValue
+        self.onComplete = onComplete
     }
 
-    func fetch(resource: String, config: NSDictionary) -> Void {
+    func fetch(resource: String, config: NSDictionary) -> URLSessionDownloadTask? {
         guard let url = URL(string: resource) else {
+            onComplete()
             onFetchError("'\(resource)' is not a url.")
-            return
+            return nil
         }
 
         currentUrl = resource
@@ -44,9 +47,11 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
         )
         let downloadTask = session.downloadTask(with: request)
         downloadTask.resume()
+        return downloadTask
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        onComplete()
         lastEventTime = Date.distantFuture
         guard let response = downloadTask.response as? HTTPURLResponse else {
             onFetchError("Failed to fetch '\(currentUrl)'.")
@@ -77,7 +82,10 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        onFetchError("Failed to fetch '\(currentUrl)'.", error)
+        if let error = error {
+            onComplete()
+            onFetchError("Failed to fetch '\(currentUrl)'.", error)
+        }
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
