@@ -160,6 +160,10 @@ type FileStat = {
 
 - Delete a file.
 
+`FileSystem.unzip(source: string, target: string): Promise<void>`
+
+- Extract a zip archive.
+
 `FileSystem.writeFile(path: string, data: string, encoding?: 'utf8' | 'base64'): Promise<void>`
 
 - Write content to a file.

@@ -1,5 +1,6 @@
 import CommonCrypto
 import Foundation
+import ZIPFoundation
 
 @objc(FileAccess)
 class FileAccess: RCTEventEmitter {
@@ -271,6 +272,18 @@ class FileAccess: RCTEventEmitter {
             resolve(nil)
         } catch {
             reject("ERR", "Failed to unlink '\(path)'.", error)
+        }
+    }
+
+    @objc(unzip:withTarget:withResolver:withRejecter:)
+    func unzip(source: String, target: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        let sourceUrl = URL(fileURLWithPath: source.path())
+        let targetUrl = URL(fileURLWithPath: target.path())
+        do {
+            try FileManager.default.unzipItem(at: sourceUrl, to: targetUrl)
+            resolve(nil)
+        } catch {
+            reject("ERR", "Failed to unzip '\(source)' to '\(target)'.", error)
         }
     }
 

@@ -13,9 +13,11 @@ import kotlinx.coroutines.launch
 import okhttp3.Call
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 import java.lang.ref.WeakReference
 import java.security.MessageDigest
+import java.util.zip.ZipInputStream
 
 class FileAccessModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
@@ -386,6 +388,39 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
       }
     } catch (e: Throwable) {
       promise.reject(e)
+    }
+  }
+
+  @ReactMethod
+  fun unzip(source: String, target: String, promise: Promise) {
+    ioScope.launch {
+      try {
+        val targetFolder = parsePathToFile(target)
+        targetFolder.mkdirs()
+        openForReading(source).use { sourceStream ->
+          ZipInputStream(sourceStream).use { zip ->
+            var entry = zip.nextEntry
+            while (entry != null) {
+              val targetFile = File(targetFolder, entry.name)
+              when {
+                entry.isDirectory -> {
+                  targetFile.mkdirs()
+                }
+                targetFile.exists() -> {
+                  throw IOException("Could not extract '${targetFile.absolutePath}' because a file with the same name already exists.")
+                }
+                else -> {
+                  targetFile.outputStream().use { zip.copyTo(it) }
+                }
+              }
+              entry = zip.nextEntry
+            }
+          }
+        }
+        promise.resolve(null)
+      } catch (e: Throwable) {
+        promise.reject(e)
+      }
     }
   }
 

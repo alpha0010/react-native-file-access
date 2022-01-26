@@ -233,6 +233,13 @@ export const FileSystem = {
   },
 
   /**
+   * Extract a zip archive.
+   */
+  unzip(source: string, target: string) {
+    return FileAccessNative.unzip(source, target);
+  },
+
+  /**
    * Write content to a file.
    *
    * Default encoding of `data` is assumed utf8.

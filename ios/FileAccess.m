@@ -77,6 +77,10 @@ RCT_EXTERN_METHOD(unlink:(NSString *)path
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(unzip:(NSString *)source withTarget:(NSString *)target
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(writeFile:(NSString *)path withData:(NSString *)data
                  withEncoding:(NSString *)encoding
                  withResolver:(RCTPromiseResolveBlock)resolve

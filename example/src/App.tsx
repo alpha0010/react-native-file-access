@@ -155,12 +155,38 @@ export function App() {
         })
       );
 
-    const sourcFile = `file://${Dirs.CacheDir}/renamed.txt`;
+    Promise.resolve().then(async () => {
+      const zipFile = Dirs.CacheDir + '/sample.zip';
+      const extractFolder = Dirs.CacheDir + '/extracted';
+      await FileSystem.unlink(zipFile).catch(console.log);
+      await FileSystem.unlink(extractFolder).catch(console.log);
+      await FileSystem.cpAsset('sample.zip', zipFile);
+      await FileSystem.unzip(zipFile, extractFolder);
+      const extractedFiles = await FileSystem.ls(extractFolder);
+      const compressedData = await FileSystem.readFile(
+        extractFolder + '/compressed-2.txt'
+      );
+      setInfo((prev) => {
+        prev.push(
+          {
+            key: 'ls(CacheDir/extracted)',
+            value: JSON.stringify(extractedFiles),
+          },
+          {
+            key: 'sample.zip:compressed-2.txt',
+            value: compressedData,
+          }
+        );
+        return prev.slice();
+      });
+    });
+
+    const sourceFile = `file://${Dirs.CacheDir}/renamed.txt`;
 
     FileSystem.unlink(Dirs.CacheDir + '/3.txt')
       .then(() => console.log('Deleted 3.txt'))
       .catch(() => console.log('Did not delete 3.txt'))
-      .then(() => FileSystem.cp(sourcFile, Dirs.CacheDir + '/3.txt'))
+      .then(() => FileSystem.cp(sourceFile, Dirs.CacheDir + '/3.txt'))
       .then(() => FileSystem.readFile(Dirs.CacheDir + '/3.txt'))
       .then((res) =>
         setInfo((prev) => {
