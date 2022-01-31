@@ -183,9 +183,9 @@ and latest best practices. For a more established library, consider:
 
 - [expo-file-system](https://docs.expo.io/versions/latest/sdk/filesystem/)
   - Well supported, a good option if already using Expo.
-- [rn-fetch-blob](https://github.com/joltup/rn-fetch-blob)
-  - Popular, and often a dependency of other libraries.
-  - Officially unmaintained, with known bugs.
+- [react-native-blob-util](https://github.com/RonRadtke/react-native-blob-util)
+  - Often a dependency of other libraries.
+  - Forked from, and compatible with, the popular but deprecated [rn-fetch-blob](https://github.com/joltup/rn-fetch-blob).
 - [react-native-fs](https://github.com/itinance/react-native-fs)
   - Large feature set.
   - Low maintenance, aging codebase.
