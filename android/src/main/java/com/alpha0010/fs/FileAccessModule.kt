@@ -403,6 +403,9 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
             while (entry != null) {
               val targetFile = File(targetFolder, entry.name)
               when {
+                !targetFile.canonicalPath.startsWith(targetFolder.canonicalPath) -> {
+                  throw SecurityException("Failed to extract invalid filename '${entry.name}'.")
+                }
                 entry.isDirectory -> {
                   targetFile.mkdirs()
                 }
