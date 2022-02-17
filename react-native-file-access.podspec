@@ -16,5 +16,5 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.dependency "React-Core"
-  s.dependency "ZIPFoundation"
+  s.dependency "ZIPFoundation", "< 0.9.12"
 end
