@@ -76,16 +76,19 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     promise.resolve(null)
   }
 
+  @Suppress("BlockingMethodInNonBlockingContext")
   @ReactMethod
   fun concatFiles(source: String, target: String, promise: Promise) {
-    try {
-      openForReading(source).use { input ->
-        FileOutputStream(parsePathToFile(target), true).use {
-          promise.resolve(input.copyTo(it).toInt())
+    ioScope.launch {
+      try {
+        openForReading(source).use { input ->
+          FileOutputStream(parsePathToFile(target), true).use {
+            promise.resolve(input.copyTo(it).toInt())
+          }
         }
+      } catch (e: Throwable) {
+        promise.reject(e)
       }
-    } catch (e: Throwable) {
-      promise.reject(e)
     }
   }
 
@@ -103,111 +106,117 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  @Suppress("BlockingMethodInNonBlockingContext")
   @ReactMethod
   fun cpAsset(asset: String, target: String, type: String, promise: Promise) {
-    try {
-      if (type == "resource") {
-        val id = reactApplicationContext.resources.getIdentifier(
-          asset,
-          null,
-          reactApplicationContext.packageName
-        )
-        reactApplicationContext.resources.openRawResource(id)
-      } else {
-        reactApplicationContext.assets.open(asset)
-      }.use { assetStream ->
-        parsePathToFile(target).outputStream().use { assetStream.copyTo(it) }
+    ioScope.launch {
+      try {
+        if (type == "resource") {
+          val id = reactApplicationContext.resources.getIdentifier(
+            asset,
+            null,
+            reactApplicationContext.packageName
+          )
+          reactApplicationContext.resources.openRawResource(id)
+        } else {
+          reactApplicationContext.assets.open(asset)
+        }.use { assetStream ->
+          parsePathToFile(target).outputStream().use { assetStream.copyTo(it) }
+        }
+        promise.resolve(null)
+      } catch (e: Throwable) {
+        promise.reject(e)
       }
-      promise.resolve(null)
-    } catch (e: Throwable) {
-      promise.reject(e)
     }
   }
 
+  @Suppress("BlockingMethodInNonBlockingContext")
   @ReactMethod
   fun cpExternal(source: String, targetName: String, dir: String, promise: Promise) {
-    try {
-      openForReading(source).use { input ->
-        if (dir == "downloads") {
-          if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-            reactApplicationContext.contentResolver.insert(
-              MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-              ContentValues().apply {
-                put(
-                  MediaStore.Downloads.DISPLAY_NAME,
-                  targetName
+    ioScope.launch {
+      try {
+        openForReading(source).use { input ->
+          if (dir == "downloads") {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+              reactApplicationContext.contentResolver.insert(
+                MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                ContentValues().apply {
+                  put(
+                    MediaStore.Downloads.DISPLAY_NAME,
+                    targetName
+                  )
+                }
+              )?.let { reactApplicationContext.contentResolver.openOutputStream(it) }
+            } else {
+              @Suppress("DEPRECATION")
+              File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                targetName
+              ).outputStream()
+            }
+          } else {
+            when (dir) {
+              "audio" -> {
+                reactApplicationContext.contentResolver.insert(
+                  MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                  ContentValues().apply {
+                    put(MediaStore.Audio.Media.DISPLAY_NAME, targetName)
+
+                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+                      // Older versions require path be specified.
+                      @Suppress("DEPRECATION")
+                      put(
+                        MediaStore.Audio.AudioColumns.DATA,
+                        File(
+                          Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_MUSIC
+                          ),
+                          targetName
+                        ).absolutePath
+                      )
+                    }
+                  }
                 )
               }
-            )?.let { reactApplicationContext.contentResolver.openOutputStream(it) }
-          } else {
-            @Suppress("DEPRECATION")
-            File(
-              Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-              targetName
-            ).outputStream()
-          }
-        } else {
-          when (dir) {
-            "audio" -> {
-              reactApplicationContext.contentResolver.insert(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                ContentValues().apply {
-                  put(MediaStore.Audio.Media.DISPLAY_NAME, targetName)
-
-                  if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
-                    // Older versions require path be specified.
-                    @Suppress("DEPRECATION")
+              "images" -> {
+                reactApplicationContext.contentResolver.insert(
+                  MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                  ContentValues().apply {
                     put(
-                      MediaStore.Audio.AudioColumns.DATA,
-                      File(
-                        Environment.getExternalStoragePublicDirectory(
-                          Environment.DIRECTORY_MUSIC
-                        ),
-                        targetName
-                      ).absolutePath
+                      MediaStore.Images.Media.DISPLAY_NAME,
+                      targetName
                     )
                   }
-                }
-              )
+                )
+              }
+              "video" -> {
+                reactApplicationContext.contentResolver.insert(
+                  MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                  ContentValues().apply {
+                    put(
+                      MediaStore.Video.Media.DISPLAY_NAME,
+                      targetName
+                    )
+                  }
+                )
+              }
+              else -> null
+            }?.let { reactApplicationContext.contentResolver.openOutputStream(it) }
+          }?.use { output ->
+            try {
+              input.copyTo(output)
+              promise.resolve(null)
+            } catch (e: Throwable) {
+              promise.reject(e)
             }
-            "images" -> {
-              reactApplicationContext.contentResolver.insert(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                ContentValues().apply {
-                  put(
-                    MediaStore.Images.Media.DISPLAY_NAME,
-                    targetName
-                  )
-                }
-              )
-            }
-            "video" -> {
-              reactApplicationContext.contentResolver.insert(
-                MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                ContentValues().apply {
-                  put(
-                    MediaStore.Video.Media.DISPLAY_NAME,
-                    targetName
-                  )
-                }
-              )
-            }
-            else -> null
-          }?.let { reactApplicationContext.contentResolver.openOutputStream(it) }
-        }?.use { output ->
-          try {
-            input.copyTo(output)
-            promise.resolve(null)
-          } catch (e: Throwable) {
-            promise.reject(e)
+            return@launch
           }
-          return
-        }
 
-        promise.reject("ERR", "Failed to copy to '$targetName' ('$dir')")
+          promise.reject("ERR", "Failed to copy to '$targetName' ('$dir')")
+        }
+      } catch (e: Throwable) {
+        promise.reject(e)
       }
-    } catch (e: Throwable) {
-      promise.reject(e)
     }
   }
 
@@ -253,23 +262,26 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     }?.let { fetchCalls[requestId] = WeakReference(it) }
   }
 
+  @Suppress("BlockingMethodInNonBlockingContext")
   @ReactMethod
   fun hash(path: String, algorithm: String, promise: Promise) {
-    try {
-      val digest = MessageDigest.getInstance(algorithm)
-      openForReading(path).use {
-        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-        var bytes = it.read(buffer)
-        while (bytes >= 0) {
-          digest.update(buffer, 0, bytes)
-          bytes = it.read(buffer)
+    ioScope.launch {
+      try {
+        val digest = MessageDigest.getInstance(algorithm)
+        openForReading(path).use {
+          val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+          var bytes = it.read(buffer)
+          while (bytes >= 0) {
+            digest.update(buffer, 0, bytes)
+            bytes = it.read(buffer)
+          }
         }
+        promise.resolve(
+          digest.digest().joinToString("") { "%02x".format(it) }
+        )
+      } catch (e: Throwable) {
+        promise.reject(e)
       }
-      promise.resolve(
-        digest.digest().joinToString("") { "%02x".format(it) }
-      )
-    } catch (e: Throwable) {
-      promise.reject(e)
     }
   }
 
@@ -341,53 +353,59 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun readFile(path: String, encoding: String, promise: Promise) {
-    try {
-      val data = openForReading(path).use { it.readBytes() }
-      if (encoding == "base64") {
-        promise.resolve(Base64.encodeToString(data, Base64.NO_WRAP))
-      } else {
-        promise.resolve(data.decodeToString())
+    ioScope.launch {
+      try {
+        val data = openForReading(path).use { it.readBytes() }
+        if (encoding == "base64") {
+          promise.resolve(Base64.encodeToString(data, Base64.NO_WRAP))
+        } else {
+          promise.resolve(data.decodeToString())
+        }
+      } catch (e: Throwable) {
+        promise.reject(e)
       }
-    } catch (e: Throwable) {
-      promise.reject(e)
     }
   }
 
   @ReactMethod
   fun stat(path: String, promise: Promise) {
-    try {
-      val file = parsePathToFile(path)
-      if (file.exists()) {
-        promise.resolve(
-          Arguments.makeNativeMap(
-            mapOf(
-              "filename" to file.name,
-              "lastModified" to file.lastModified(),
-              "path" to file.path,
-              "size" to file.length(),
-              "type" to if (file.isDirectory) "directory" else "file",
+    ioScope.launch {
+      try {
+        val file = parsePathToFile(path)
+        if (file.exists()) {
+          promise.resolve(
+            Arguments.makeNativeMap(
+              mapOf(
+                "filename" to file.name,
+                "lastModified" to file.lastModified(),
+                "path" to file.path,
+                "size" to file.length(),
+                "type" to if (file.isDirectory) "directory" else "file",
+              )
             )
           )
-        )
-      } else {
-        promise.reject("ENOENT", "'$path' does not exist.")
+        } else {
+          promise.reject("ENOENT", "'$path' does not exist.")
+        }
+      } catch (e: Throwable) {
+        promise.reject(e)
       }
-    } catch (e: Throwable) {
-      promise.reject(e)
     }
   }
 
   @ReactMethod
   fun unlink(path: String, promise: Promise) {
-    try {
-      val file = parsePathToFile(path)
-      if (file.exists() && file.deleteRecursively()) {
-        promise.resolve(null)
-      } else {
-        promise.reject("ERR", "Failed to unlink '$path'.")
+    ioScope.launch {
+      try {
+        val file = parsePathToFile(path)
+        if (file.exists() && file.deleteRecursively()) {
+          promise.resolve(null)
+        } else {
+          promise.reject("ERR", "Failed to unlink '$path'.")
+        }
+      } catch (e: Throwable) {
+        promise.reject(e)
       }
-    } catch (e: Throwable) {
-      promise.reject(e)
     }
   }
 
