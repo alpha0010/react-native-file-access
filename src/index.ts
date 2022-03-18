@@ -24,6 +24,8 @@ export type {
   HashAlgorithm,
 } from './types';
 
+export { Util } from './util';
+
 /**
  * ID tracking next fetch request.
  */

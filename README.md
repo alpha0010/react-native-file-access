@@ -169,6 +169,23 @@ type FileStat = {
 - Write content to a file.
   - Default encoding of `data` is assumed utf8.
 
+#### Utility functions.
+
+`Util.basename(path: string, separator?: string): string`
+
+- Get the file/folder name from the end of the path.
+  - Default path `separator` is `/`.
+
+`Util.dirname(path: string, separator?: string): string`
+
+- Get the path containing the file/folder.
+  - Default path `separator` is `/`.
+
+`Util.extname(path: string, separator?: string): string`
+
+- Get the file extension.
+  - Default path `separator` is `/`.
+
 ## Testing
 
 For ease of testing, this library contains a mock implementation:
