@@ -10,7 +10,7 @@ function regexEscape(literal: string) {
  */
 function normalizeSeparator(path: string, separator: string) {
   const sepRe = new RegExp(`(${regexEscape(separator)}){2,}`, 'g');
-  return path.replace(sepRe, separator.replaceAll('$', '$$$$'));
+  return path.replace(sepRe, separator.replace(/\$/g, '$$$$'));
 }
 
 /**

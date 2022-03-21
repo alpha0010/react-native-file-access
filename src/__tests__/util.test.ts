@@ -33,6 +33,7 @@ it('extracts dirname', () => {
   expect(Util.dirname('abc$$def$', '$')).toBe('abc');
 
   expect(Util.dirname('abc::def:', '::')).toBe('abc');
+  expect(Util.dirname('abc$`$`def$`$`hij$`klm', '$`')).toBe('abc$`def$`hij');
 });
 
 it('extracts extname', () => {
