@@ -156,6 +156,10 @@ type FileStat = {
 
 - Read file metadata.
 
+`FileSystem.statDir(path: string): Promise<FileStat[]>`
+
+- Read metadata of all files in a directory.
+
 `FileSystem.unlink(path: string): Promise<void>`
 
 - Delete a file.

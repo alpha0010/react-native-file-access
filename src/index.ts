@@ -228,6 +228,13 @@ export const FileSystem = {
   },
 
   /**
+   * Read metadata of all files in a directory.
+   */
+  statDir(path: string): Promise<FileStat[]> {
+    return FileAccessNative.statDir(path);
+  },
+
+  /**
    * Delete a file.
    */
   unlink(path: string) {

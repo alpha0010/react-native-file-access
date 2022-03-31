@@ -276,17 +276,22 @@ class FileAccess: RCTEventEmitter {
     func stat(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             do {
-                let pathUrl = URL(fileURLWithPath: path.path())
-                let attrs = try FileManager.default.attributesOfItem(atPath: path.path())
-                resolve([
-                    "filename": pathUrl.lastPathComponent,
-                    "lastModified": 1000 * (attrs[.modificationDate] as! NSDate).timeIntervalSince1970,
-                    "path": pathUrl.path,
-                    "size": attrs[.size],
-                    "type": self.checkIfIsDirectory(path: path).isDirectory ? "directory" : "file"
-                ])
+                resolve(try self.statFile(path: path))
             } catch {
                 reject("ERR", "Failed to stat '\(path)'.", error)
+            }
+        }
+    }
+
+    @objc(statDir:withResolver:withRejecter:)
+    func statDir(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        DispatchQueue.global().async {
+            do {
+                try resolve(FileManager.default.contentsOfDirectory(atPath: path.path())
+                    .map { try self.statFile(path: "\(path)/\($0)") }
+                )
+            } catch {
+                reject("ERR", "Failed to list '\(path)'.", error)
             }
         }
     }
@@ -339,5 +344,17 @@ class FileAccess: RCTEventEmitter {
         let exists = FileManager.default.fileExists(atPath: path.path(), isDirectory: &isDir)
         let isDirectory = isDir.boolValue
         return (exists, isDirectory)
+    }
+
+    private func statFile(path: String) throws -> [String : Any?] {
+        let pathUrl = URL(fileURLWithPath: path.path())
+        let attrs = try FileManager.default.attributesOfItem(atPath: path.path())
+        return [
+            "filename": pathUrl.lastPathComponent,
+            "lastModified": 1000 * (attrs[.modificationDate] as! NSDate).timeIntervalSince1970,
+            "path": pathUrl.path,
+            "size": attrs[.size],
+            "type": self.checkIfIsDirectory(path: path).isDirectory ? "directory" : "file"
+        ]
     }
 }

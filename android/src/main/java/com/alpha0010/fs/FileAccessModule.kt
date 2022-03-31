@@ -373,20 +373,25 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
       try {
         val file = parsePathToFile(path)
         if (file.exists()) {
-          promise.resolve(
-            Arguments.makeNativeMap(
-              mapOf(
-                "filename" to file.name,
-                "lastModified" to file.lastModified(),
-                "path" to file.path,
-                "size" to file.length(),
-                "type" to if (file.isDirectory) "directory" else "file",
-              )
-            )
-          )
+          promise.resolve(statFile(file))
         } else {
           promise.reject("ENOENT", "'$path' does not exist.")
         }
+      } catch (e: Throwable) {
+        promise.reject(e)
+      }
+    }
+  }
+
+  @ReactMethod
+  fun statDir(path: String, promise: Promise) {
+    ioScope.launch {
+      try {
+        val fileList = Arguments.createArray()
+        parsePathToFile(path).listFiles()?.forEach {
+          fileList.pushMap(statFile(it))
+        }
+        promise.resolve(fileList)
       } catch (e: Throwable) {
         promise.reject(e)
       }
@@ -471,5 +476,17 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     } else {
       parsePathToFile(path).inputStream()
     }
+  }
+
+  private fun statFile(file: File): ReadableMap {
+    return Arguments.makeNativeMap(
+      mapOf(
+        "filename" to file.name,
+        "lastModified" to file.lastModified(),
+        "path" to file.path,
+        "size" to file.length(),
+        "type" to if (file.isDirectory) "directory" else "file",
+      )
+    )
   }
 }
