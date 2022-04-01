@@ -286,9 +286,10 @@ class FileAccess: RCTEventEmitter {
     @objc(statDir:withResolver:withRejecter:)
     func statDir(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
+            let base = URL(fileURLWithPath: path.path())
             do {
                 try resolve(FileManager.default.contentsOfDirectory(atPath: path.path())
-                    .map { try self.statFile(path: "\(path)/\($0)") }
+                    .map { try self.statFile(path: base.appendingPathComponent($0).path) }
                 )
             } catch {
                 reject("ERR", "Failed to list '\(path)'.", error)
