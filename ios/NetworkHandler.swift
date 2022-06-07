@@ -51,6 +51,7 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        session.finishTasksAndInvalidate()
         onComplete()
         lastEventTime = Date.distantFuture
         guard let response = downloadTask.response as? HTTPURLResponse else {
@@ -83,6 +84,7 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let error = error {
+            session.finishTasksAndInvalidate()
             onComplete()
             onFetchError("Failed to fetch '\(currentUrl)'.", error)
         }
