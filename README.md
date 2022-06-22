@@ -12,6 +12,8 @@ API 30 or higher.
 npm install react-native-file-access
 ```
 
+If the app does not use autolinking, continue to the [manual install instructions](https://github.com/alpha0010/react-native-file-access/wiki/Manual-Installation) in the wiki.
+
 ### Compatibility
 
 For React Native 0.64 and older, use 1.x.x. For React Native 0.65+, use 2.x.x.
