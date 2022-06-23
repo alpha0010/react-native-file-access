@@ -10,11 +10,11 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => "10.0", :osx => "10.10" }
+  s.platforms    = { :ios => "11.0", :osx => "10.10" }
   s.source       = { :git => "https://github.com/alpha0010/react-native-file-access.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.dependency "React-Core"
-  s.dependency "ZIPFoundation", "< 0.9.12"
+  s.dependency "ZIPFoundation", "0.9.11"
 end
