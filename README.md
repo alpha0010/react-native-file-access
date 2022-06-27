@@ -10,6 +10,7 @@ API 30 or higher.
 
 ```sh
 npm install react-native-file-access
+cd ios && pod install
 ```
 
 If the app does not use autolinking, continue to the [manual install instructions](https://github.com/alpha0010/react-native-file-access/wiki/Manual-Installation) in the wiki.
