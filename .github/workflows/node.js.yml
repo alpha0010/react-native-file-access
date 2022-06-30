@@ -20,7 +20,7 @@ jobs:
         key: ${{ hashFiles('package.json') }}
     - uses: actions/setup-node@v1
       with:
-        node-version: 12.x
+        node-version: 16.x
     - run: yarn install
       if: steps.cache-node.outputs.cache-hit != 'true'
     - run: yarn lint
