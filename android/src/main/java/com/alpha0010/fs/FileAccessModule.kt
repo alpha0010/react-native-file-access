@@ -6,15 +6,14 @@ import android.os.Environment
 import android.os.StatFs
 import android.provider.MediaStore
 import android.util.Base64
+import android.webkit.MimeTypeMap
+import androidx.documentfile.provider.DocumentFile
 import com.facebook.react.bridge.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.Call
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 import java.lang.ref.WeakReference
 import java.security.MessageDigest
 import java.util.zip.ZipInputStream
@@ -97,7 +96,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     ioScope.launch {
       try {
         openForReading(source).use { input ->
-          parsePathToFile(target).outputStream().use { input.copyTo(it) }
+          openForWriting(target).use { input.copyTo(it) }
         }
         promise.resolve(null)
       } catch (e: Throwable) {
@@ -121,7 +120,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
         } else {
           reactApplicationContext.assets.open(asset)
         }.use { assetStream ->
-          parsePathToFile(target).outputStream().use { assetStream.copyTo(it) }
+          openForWriting(target).use { assetStream.copyTo(it) }
         }
         promise.resolve(null)
       } catch (e: Throwable) {
@@ -450,14 +449,15 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  @Suppress("BlockingMethodInNonBlockingContext")
   @ReactMethod
   fun writeFile(path: String, data: String, encoding: String, promise: Promise) {
     ioScope.launch {
       try {
         if (encoding == "base64") {
-          parsePathToFile(path).writeBytes(Base64.decode(data, Base64.DEFAULT))
+          openForWriting(path).use { it.write(Base64.decode(data, Base64.DEFAULT)) }
         } else {
-          parsePathToFile(path).writeText(data)
+          openForWriting(path).use { it.write(data.toByteArray()) }
         }
         promise.resolve(null)
       } catch (e: Throwable) {
@@ -476,6 +476,39 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     } else {
       parsePathToFile(path).inputStream()
     }
+  }
+
+  private fun openForWriting(path: String): OutputStream {
+    if (path.startsWith("content://")) {
+      val fullUri = Uri.parse(path)
+      val dFile = DocumentFile.fromSingleUri(reactApplicationContext, fullUri)
+      if (dFile != null && dFile.isFile) {
+        return reactApplicationContext.contentResolver.openOutputStream(fullUri)!!
+      }
+
+      val fileName = fullUri.lastPathSegment!!
+      val out = fullUri.buildUpon().path("").apply {
+        for (segment in fullUri.pathSegments.dropLast(1)) {
+          appendPath(segment)
+        }
+      }.build().let { DocumentFile.fromTreeUri(reactApplicationContext, it) }
+        ?.createFile(guessMimeType(fileName), fileName)
+        ?: throw IOException("Failed to open '${path}' for writing.")
+      return reactApplicationContext.contentResolver.openOutputStream(out.uri)!!
+    } else {
+      return parsePathToFile(path).outputStream()
+    }
+  }
+
+  private fun guessMimeType(path: String): String {
+    val extension = path.substringAfterLast(".", "")
+    if (extension.isNotEmpty()) {
+      val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.lowercase())
+      if (mime != null) {
+        return mime
+      }
+    }
+    return "application/octet-stream"
   }
 
   private fun statFile(file: File): ReadableMap {
