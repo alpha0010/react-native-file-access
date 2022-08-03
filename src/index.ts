@@ -201,6 +201,8 @@ export const FileSystem = {
 
   /**
    * Make a new directory.
+   *
+   * Returns path of the created directory.
    */
   mkdir(path: string) {
     return FileAccessNative.mkdir(path);
@@ -299,3 +301,15 @@ export const Dirs: {
    */
   SDCardDir?: string;
 } = NativeModules.RNFileAccess?.getConstants();
+
+/**
+ * Utility functions for working with Android scoped storage.
+ */
+export const AndroidScoped = {
+  /**
+   * Append a path segment to an Android scoped storage content uri.
+   */
+  appendPath(basePath: string, segment: string) {
+    return basePath + encodeURIComponent('/' + segment);
+  },
+};

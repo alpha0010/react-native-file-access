@@ -247,7 +247,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
   fun exists(path: String, promise: Promise) {
     ioScope.launch {
       try {
-        promise.resolve(parsePathToFile(path).exists())
+        promise.resolve(path.asDocumentFile(reactApplicationContext).exists())
       } catch (e: Throwable) {
         promise.reject(e)
       }
@@ -288,7 +288,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
   fun isDir(path: String, promise: Promise) {
     ioScope.launch {
       try {
-        promise.resolve(parsePathToFile(path).isDirectory)
+        promise.resolve(path.asDocumentFile(reactApplicationContext).isDirectory)
       } catch (e: Throwable) {
         promise.reject(e)
       }
@@ -300,7 +300,9 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     ioScope.launch {
       try {
         val fileList = Arguments.createArray()
-        parsePathToFile(path).list()?.forEach { fileList.pushString(it) }
+        path.asDocumentFile(reactApplicationContext)
+          .listFiles()
+          .forEach { fileList.pushString(it.name) }
         promise.resolve(fileList)
       } catch (e: Throwable) {
         promise.reject(e)
@@ -311,14 +313,23 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun mkdir(path: String, promise: Promise) {
     ioScope.launch {
-      val file = parsePathToFile(path)
       try {
+        if (path.isContentUri()) {
+          val (uri, dirName) = parseScopedPath(path)
+          val newDir = DocumentFile.fromTreeUri(reactApplicationContext, uri)
+            ?.createDirectory(dirName)
+            ?: throw IOException("Failed to create directory '$path'.")
+          promise.resolve(newDir.uri.toString())
+          return@launch
+        }
+
+        val file = parsePathToFile(path)
         when {
           file.exists() -> {
             promise.reject("EEXIST", "'$path' already exists.")
           }
-          parsePathToFile(path).mkdirs() -> {
-            promise.resolve(null)
+          file.mkdirs() -> {
+            promise.resolve(file.canonicalPath)
           }
           else -> {
             promise.reject("EPERM", "Failed to create directory '$path'.")
@@ -334,7 +345,15 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
   fun mv(source: String, target: String, promise: Promise) {
     ioScope.launch {
       try {
-        if (!parsePathToFile(source).renameTo(parsePathToFile(target))) {
+        if (source.isContentUri()) {
+          // When renaming a file in scoped storage, assume target is filename.
+          val success = source.asDocumentFile(reactApplicationContext)
+            .renameTo(target)
+          if (!success) {
+            promise.reject("ERR", "Failed to rename '$source' to '$target'.")
+            return@launch
+          }
+        } else if (!parsePathToFile(source).renameTo(parsePathToFile(target))) {
           parsePathToFile(source).also {
             it.copyTo(
               parsePathToFile(target),
@@ -370,7 +389,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
   fun stat(path: String, promise: Promise) {
     ioScope.launch {
       try {
-        val file = parsePathToFile(path)
+        val file = path.asDocumentFile(reactApplicationContext)
         if (file.exists()) {
           promise.resolve(statFile(file))
         } else {
@@ -387,9 +406,9 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     ioScope.launch {
       try {
         val fileList = Arguments.createArray()
-        parsePathToFile(path).listFiles()?.forEach {
-          fileList.pushMap(statFile(it))
-        }
+        path.asDocumentFile(reactApplicationContext)
+          .listFiles()
+          .forEach { fileList.pushMap(statFile(it)) }
         promise.resolve(fileList)
       } catch (e: Throwable) {
         promise.reject(e)
@@ -401,8 +420,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
   fun unlink(path: String, promise: Promise) {
     ioScope.launch {
       try {
-        val file = parsePathToFile(path)
-        if (file.exists() && file.deleteRecursively()) {
+        if (path.asDocumentFile(reactApplicationContext).delete()) {
           promise.resolve(null)
         } else {
           promise.reject("ERR", "Failed to unlink '$path'.")
@@ -471,27 +489,29 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
    * Framework content URIs.
    */
   private fun openForReading(path: String): InputStream {
-    return if (path.startsWith("content://")) {
+    return if (path.isContentUri()) {
       reactApplicationContext.contentResolver.openInputStream(Uri.parse(path))!!
     } else {
       parsePathToFile(path).inputStream()
     }
   }
 
+  /**
+   * Open a file for write access. Supports standard file system paths, file
+   * URIs and Storage Access Framework content URIs.
+   *
+   * Note that SAF may yield a different filename than the original request.
+   */
   private fun openForWriting(path: String): OutputStream {
-    if (path.startsWith("content://")) {
-      val fullUri = Uri.parse(path)
-      val dFile = DocumentFile.fromSingleUri(reactApplicationContext, fullUri)
-      if (dFile != null && dFile.isFile) {
-        return reactApplicationContext.contentResolver.openOutputStream(fullUri)!!
+    if (path.isContentUri()) {
+      val dFile = path.asDocumentFile(reactApplicationContext)
+      if (dFile.isFile) {
+        return reactApplicationContext.contentResolver.openOutputStream(dFile.uri)!!
       }
 
-      val fileName = fullUri.lastPathSegment!!
-      val out = fullUri.buildUpon().path("").apply {
-        for (segment in fullUri.pathSegments.dropLast(1)) {
-          appendPath(segment)
-        }
-      }.build().let { DocumentFile.fromTreeUri(reactApplicationContext, it) }
+      val (uri, fileName) = parseScopedPath(path)
+      val out = uri
+        .let { DocumentFile.fromTreeUri(reactApplicationContext, it) }
         ?.createFile(guessMimeType(fileName), fileName)
         ?: throw IOException("Failed to open '${path}' for writing.")
       return reactApplicationContext.contentResolver.openOutputStream(out.uri)!!
@@ -511,12 +531,12 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     return "application/octet-stream"
   }
 
-  private fun statFile(file: File): ReadableMap {
+  private fun statFile(file: DocumentFile): ReadableMap {
     return Arguments.makeNativeMap(
       mapOf(
         "filename" to file.name,
         "lastModified" to file.lastModified(),
-        "path" to file.path,
+        "path" to if (file.uri.scheme == "file") file.uri.path else file.uri.toString(),
         "size" to file.length(),
         "type" to if (file.isDirectory) "directory" else "file",
       )

@@ -236,7 +236,7 @@ class FileAccess: RCTEventEmitter {
         DispatchQueue.global().async {
             do {
                 try FileManager.default.createDirectory(atPath: path.path(), withIntermediateDirectories: true, attributes: nil)
-                resolve(nil)
+                resolve(path)
             } catch {
                 reject("ERR", "Failed to create directory '\(path)'.", error)
             }

@@ -48,7 +48,7 @@ type FileAccessType = {
   hash(path: string, algorithm: HashAlgorithm): Promise<string>;
   isDir(path: string): Promise<boolean>;
   ls(path: string): Promise<string[]>;
-  mkdir(path: string): Promise<void>;
+  mkdir(path: string): Promise<string>;
   mv(source: string, target: string): Promise<void>;
   readFile(path: string, encoding: Encoding): Promise<string>;
   stat(path: string): Promise<FileStat>;
