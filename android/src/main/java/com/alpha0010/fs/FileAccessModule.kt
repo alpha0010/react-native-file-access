@@ -520,6 +520,11 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  /**
+   * Guess mime type based on file extension.
+   *
+   * Simplifies api, to avoid requiring specifying mime types on write.
+   */
   private fun guessMimeType(path: String): String {
     val extension = path.substringAfterLast(".", "")
     if (extension.isNotEmpty()) {

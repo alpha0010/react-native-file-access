@@ -132,9 +132,10 @@ type ManagedFetchResult = {
 
 - List files in a directory.
 
-`FileSystem.mkdir(path: string): Promise<void>`
+`FileSystem.mkdir(path: string): Promise<string>`
 
 - Make a new directory.
+  - Returns path of created directory.
 
 `FileSystem.mv(source: string, target: string): Promise<void>`
 
@@ -192,6 +193,27 @@ type FileStat = {
 
 - Get the file extension.
   - Default path `separator` is `/`.
+
+#### Scoped storage.
+
+For simple usage, use `FileSystem.cpExternal()` to submit files to general
+scoped storage categories.
+
+Most functions in this library work with `content://` Android resource uris.
+To gain access to a resource uri, currently use a library such as
+[react-native-document-picker](https://github.com/rnmods/react-native-document-picker) or
+[react-native-scoped-storage](https://github.com/ammarahm-ed/react-native-scoped-storage).
+Eventually this library will incorporate file/folder selector functionality
+(pull requests welcome).
+
+Note:
+- When generating a scoped storage resource uri, use the helper
+  `AndroidScoped.appendPath(dir, 'data.txt')`, not `dir + '/data.txt'`.
+- Android may change the name of created files/folders.
+
+`AndroidScoped.appendPath(basePath: string, segment: string): string`
+
+- Append a path segment to an Android scoped storage content uri.
 
 ## Testing
 

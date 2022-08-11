@@ -13,8 +13,11 @@ fun String.asDocumentFile(context: Context): DocumentFile {
     try {
       val uri = Uri.parse(this)
       val dFile = if (uri.isTreeUri()) {
+        // Produced by Intent.ACTION_OPEN_DOCUMENT_TREE requests.
         DocumentFile.fromTreeUri(context, uri)
       } else {
+        // Produced by Intent.ACTION_CREATE_DOCUMENT and
+        // Intent.ACTION_OPEN_DOCUMENT requests.
         DocumentFile.fromSingleUri(context, uri)
       }
       if (dFile != null) {
@@ -24,9 +27,13 @@ fun String.asDocumentFile(context: Context): DocumentFile {
       // Ignored.
     }
   }
+  // Regular (app internal) filesystem path.
   return DocumentFile.fromFile(parsePathToFile(this))
 }
 
+/**
+ * Check if the string looks like it is a scoped storage content uri.
+ */
 fun String.isContentUri() = startsWith("content://")
 
 /**
