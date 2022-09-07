@@ -13,12 +13,6 @@ npm install react-native-file-access
 cd ios && pod install
 ```
 
-Requires permission `ACCESS_NETWORK_STATE` to check for unmetered connections.
-In `AndroidManifest.xml` add:
-```xml
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-```
-
 If the app does not use autolinking, continue to the [manual install instructions](https://github.com/alpha0010/react-native-file-access/wiki/Manual-Installation) in the wiki.
 
 ### Compatibility
