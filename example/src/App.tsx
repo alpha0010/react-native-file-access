@@ -201,6 +201,7 @@ export function App() {
     // Network access.
     FileSystem.fetch('https://example.com', {
       path: Dirs.CacheDir + '/download.html',
+      network: 'unmetered',
     })
       .then((res) => {
         setInfo((prev) => {

@@ -22,6 +22,7 @@ export type {
   FileStat,
   FsStat,
   HashAlgorithm,
+  NetworkType,
 } from './types';
 
 export { Util } from './util';

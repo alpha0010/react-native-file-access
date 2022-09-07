@@ -40,8 +40,19 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
             }
         }
 
+        let sessionConf = URLSessionConfiguration.default
+        if let network = config["network"] as? String,
+            network == "unmetered" {
+            // Use an unmetered network (most likely WiFi).
+            if #available(iOS 13.0, *) {
+                sessionConf.allowsConstrainedNetworkAccess = false
+                sessionConf.allowsExpensiveNetworkAccess = false
+            } else {
+                sessionConf.allowsCellularAccess = false
+            }
+        }
         let session = URLSession(
-            configuration: URLSessionConfiguration.default,
+            configuration: sessionConf,
             delegate: self,
             delegateQueue: OperationQueue.current
         )

@@ -8,10 +8,18 @@ export type Encoding = 'utf8' | 'base64';
 
 export type ExternalDir = 'audio' | 'downloads' | 'images' | 'video';
 
+export type NetworkType = 'any' | 'unmetered';
+
 export type FetchInit = {
   body?: string;
   headers?: { [key: string]: string };
   method?: string;
+
+  /**
+   * Allowed connection. Throws if specified connection is unavailable.
+   */
+  network?: NetworkType;
+
   /**
    * Output path.
    */

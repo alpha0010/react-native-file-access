@@ -13,6 +13,12 @@ npm install react-native-file-access
 cd ios && pod install
 ```
 
+Requires permission `ACCESS_NETWORK_STATE` to check for unmetered connections.
+In `AndroidManifest.xml` add:
+```xml
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
+
 If the app does not use autolinking, continue to the [manual install instructions](https://github.com/alpha0010/react-native-file-access/wiki/Manual-Installation) in the wiki.
 
 ### Compatibility
@@ -79,7 +85,7 @@ const text = await FileSystem.readFile(Dirs.CacheDir + '/test.txt');
 ```
 FilesSystem.fetch(
   resource: string,
-  init: { body?: string, headers?: { [key: string]: string }, method?: string, path?: string },
+  init: { body?: string, headers?: { [key: string]: string }, method?: string, network?: 'any' | 'unmetered', path?: string },
   onProgress?: (bytesRead: number, contentLength: number, done: boolean) => void
 ): Promise<FetchResult>
 
@@ -94,6 +100,11 @@ type FetchResult = {
 ```
 
 - Save a network request to a file.
+  - `resource` - URL to fetch.
+  - `init.path` - Optional filesystem location to save the response.
+  - `init.network` - Optional restriction on network type. Specifying
+    `unmetered` will reject the request if unmetered connections (most likely
+    WiFi) are unavailable.
   - `onProgress` - Optional callback to listen to download progress. Events
     are rate limited, so do not rely on `done` becoming `true`.
     `contentLength` is only accurate if the server sends the correct headers.
@@ -101,7 +112,7 @@ type FetchResult = {
 ```
 FilesSystem.fetchManaged(
   resource: string,
-  init: { body?: string, headers?: { [key: string]: string }, method?: string, path?: string },
+  init: { body?: string, headers?: { [key: string]: string }, method?: string, network?: 'any' | 'unmetered', path?: string },
   onProgress?: (bytesRead: number, contentLength: number, done: boolean) => void
 ): ManagedFetchResult
 

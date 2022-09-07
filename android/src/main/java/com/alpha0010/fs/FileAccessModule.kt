@@ -256,9 +256,11 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun fetch(requestId: Int, resource: String, init: ReadableMap) {
-    NetworkHandler(reactApplicationContext).fetch(requestId, resource, init) {
-      fetchCalls.remove(requestId)
-    }?.let { fetchCalls[requestId] = WeakReference(it) }
+    CoroutineScope(Dispatchers.Default).launch {
+      NetworkHandler(reactApplicationContext)
+        .fetch(requestId, resource, init) { fetchCalls.remove(requestId) }
+        ?.let { fetchCalls[requestId] = WeakReference(it) }
+    }
   }
 
   @Suppress("BlockingMethodInNonBlockingContext")
