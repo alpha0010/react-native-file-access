@@ -329,7 +329,7 @@ class FileAccess: RCTEventEmitter {
             do {
                 if encoding == "base64" {
                     let pathUrl = URL(fileURLWithPath: path.path())
-                    guard let decoded = Data(base64Encoded: data) else {
+                    guard let decoded = Data(base64Encoded: data, options: .ignoreUnknownCharacters) else {
                         reject("ERR", "Failed to write to '\(path)', invalid base64.", nil)
                         return
                     }
