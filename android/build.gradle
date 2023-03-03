@@ -121,7 +121,6 @@ def kotlin_coroutines_version = getExtOrDefault('kotlinCoroutinesVersion')
 dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
   implementation 'androidx.documentfile:documentfile:1.0.1'
 }
