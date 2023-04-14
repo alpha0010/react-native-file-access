@@ -50,7 +50,7 @@ const text = await FileSystem.readFile(Dirs.CacheDir + '/test.txt');
 
 - Append a file to another file. Returns number of bytes written.
 
-`FileSystem.cp(source: string, target: string): Promise<void>`
+`FileSystem.cp(source: string, target: string, onProgress?: (bytesCopied: number, contentLength: number, done: boolean) => void): Promise<void>`
 
 - Copy a file.
 

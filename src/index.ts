@@ -68,6 +68,39 @@ function registerFetchListener(
   );
 }
 
+/**
+ * Get a `Promise` that will resolve after the specified timespan.
+ */
+function sleep(milliseconds: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
+}
+
+/**
+ * Periodically report file copy status to the progress listener.
+ */
+async function wrapCpListener(
+  source: string,
+  target: string,
+  completion: Promise<void>,
+  onProgress: ProgressListener
+) {
+  const sourceStat = await FileSystem.stat(source);
+  while (true) {
+    const targetStat = await Promise.race([
+      completion.then(() => true),
+      sleep(150)
+        .then(() => FileSystem.stat(target))
+        .catch(() => false),
+    ]);
+    if (targetStat === true) {
+      onProgress(sourceStat.size, sourceStat.size, true);
+      break; // Process completed.
+    } else if (targetStat !== false) {
+      onProgress(targetStat.size, sourceStat.size, false);
+    }
+  }
+}
+
 export const FileSystem = {
   /**
    * Append content to a file.
@@ -90,8 +123,11 @@ export const FileSystem = {
   /**
    * Copy a file.
    */
-  cp(source: string, target: string) {
-    return FileAccessNative.cp(source, target);
+  cp(source: string, target: string, onProgress?: ProgressListener) {
+    const res = FileAccessNative.cp(source, target);
+    return onProgress == null
+      ? res
+      : wrapCpListener(source, target, res, onProgress);
   },
 
   /**
