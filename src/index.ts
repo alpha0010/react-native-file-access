@@ -1,5 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
-import { FileAccessEventEmitter, FileAccessNative } from './native';
+import type { Directories, FileStat, FsStat, Spec } from './NativeFileAccess';
 import type {
   AssetType,
   Encoding,
@@ -7,25 +7,47 @@ import type {
   FetchEvent,
   FetchInit,
   FetchResult,
-  FileStat,
-  FsStat,
   HashAlgorithm,
   ManagedFetchResult,
   ProgressListener,
 } from './types';
+import { NativeEventEmitter } from 'react-native';
 
 export type {
   AssetType,
   Encoding,
   ExternalDir,
   FetchResult,
-  FileStat,
-  FsStat,
   HashAlgorithm,
   NetworkType,
 } from './types';
+export type { FileStat, FsStat } from './NativeFileAccess';
 
 export { Util } from './util';
+
+const LINKING_ERROR =
+  `The package 'react-native-file-access' doesn't seem to be linked. Make sure: \n\n` +
+  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
+  '- You rebuilt the app after installing the package\n' +
+  '- You are not using Expo Go\n';
+
+// @ts-expect-error
+const isTurboModuleEnabled = global.__turboModuleProxy != null;
+
+const FileAccessModule = isTurboModuleEnabled
+  ? require('./NativeFileAccess').default
+  : NativeModules.FileAccess;
+
+const FileAccessNative: Spec = FileAccessModule
+  ? FileAccessModule
+  : new Proxy(
+      {},
+      {
+        get() {
+          throw new Error(LINKING_ERROR);
+        },
+      }
+    );
 
 /**
  * ID tracking next fetch request.
@@ -41,7 +63,8 @@ function registerFetchListener(
   reject: (e: Error) => void,
   onProgress?: ProgressListener
 ) {
-  const listener = FileAccessEventEmitter.addListener(
+  const eventEmitter = new NativeEventEmitter(FileAccessModule);
+  const listener = eventEmitter.addListener(
     'FetchEvent',
     (event: FetchEvent) => {
       if (event.requestId !== requestId) {
@@ -140,9 +163,7 @@ export const FileSystem = {
    * https://developer.android.com/guide/topics/resources/providing-resources.html#OriginalFiles
    */
   cpAsset(asset: string, target: string, type: AssetType = 'asset') {
-    return Platform.OS === 'android'
-      ? FileAccessNative.cpAsset(asset, target, type)
-      : FileAccessNative.cpAsset(asset, target);
+    return FileAccessNative.cpAsset(asset, target, type);
   },
 
   /**
@@ -207,11 +228,6 @@ export const FileSystem = {
    * This is an Apple only feature.
    */
   getAppGroupDir(groupName: string) {
-    if (Platform.OS !== 'ios' && Platform.OS !== 'macos') {
-      return Promise.reject(
-        new Error('AppGroups are available on Apple devices only')
-      );
-    }
     return FileAccessNative.getAppGroupDir(groupName);
   },
 
@@ -297,56 +313,13 @@ export const FileSystem = {
   },
 };
 
-/**
- * Directory constants.
- */
-export const Dirs: {
-  /**
-   * Temporary files. System/user may delete these if device storage is low.
-   */
-  CacheDir: string;
-
-  /**
-   * System recommended location for SQLite files.
-   *
-   * Android only.
-   */
-  DatabaseDir?: string;
-
-  /**
-   * Persistent data. Generally user created content.
-   */
-  DocumentDir: string;
-
-  /**
-   * Persistent app internal data.
-   *
-   * iOS & MacOS only.
-   */
-  LibraryDir?: string;
-
-  /**
-   * App's default root directory.
-   */
-  MainBundleDir: string;
-
-  /**
-   * Root path to removable media. Prefer `cpExternal()` when possible, as
-   * Android discourages this access method.
-   *
-   * Android only.
-   */
-  SDCardDir?: string;
-} = NativeModules.RNFileAccess?.getConstants();
-
-/**
- * Utility functions for working with Android scoped storage.
- */
-export const AndroidScoped = {
-  /**
-   * Append a path segment to an Android scoped storage content uri.
-   */
-  appendPath(basePath: string, segment: string) {
-    return basePath + encodeURIComponent('/' + segment);
-  },
-};
+export const Dirs: Directories = FileAccessModule
+  ? FileAccessNative.getConstants()
+  : new Proxy(
+      { CacheDir: '', DocumentDir: '', MainBundleDir: '' },
+      {
+        get() {
+          throw new Error(LINKING_ERROR);
+        },
+      }
+    );

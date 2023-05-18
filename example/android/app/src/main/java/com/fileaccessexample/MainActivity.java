@@ -1,4 +1,4 @@
-package com.example.reactnativefileaccess;
+package com.fileaccessexample;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
