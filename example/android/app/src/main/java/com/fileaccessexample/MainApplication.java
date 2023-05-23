@@ -1,8 +1,7 @@
-package com.example.reactnativefileaccess;
+package com.fileaccessexample;
 
 import android.app.Application;
 
-import com.alpha0010.fs.FileAccessPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
@@ -26,9 +25,8 @@ public class MainApplication extends Application implements ReactApplication {
       protected List<ReactPackage> getPackages() {
         @SuppressWarnings("UnnecessaryLocalVariable")
         List<ReactPackage> packages = new PackageList(this).getPackages();
-        // Packages that cannot be autolinked yet can be added manually here, for FileAccessExample:
+        // Packages that cannot be autolinked yet can be added manually here, for example:
         // packages.add(new MyReactNativePackage());
-        packages.add(new FileAccessPackage());
         return packages;
       }
 

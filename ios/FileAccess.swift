@@ -2,15 +2,11 @@ import CommonCrypto
 import Foundation
 import ZIPFoundation
 
-@objc(FileAccess)
-class FileAccess: RCTEventEmitter {
+@objc(FileAccessImpl)
+public class FileAccess : NSObject {
     private let fetchCalls = NSMapTable<NSNumber, URLSessionDownloadTask>.init(keyOptions: .copyIn, valueOptions: .weakMemory)
 
-    @objc override static func requiresMainQueueSetup() -> Bool {
-        return false
-    }
-
-    @objc override func constantsToExport() -> [AnyHashable : Any] {
+    @objc public func constantsToExport() -> [AnyHashable : Any] {
         return [
             "CacheDir": NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!,
             "DocumentDir": NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!,
@@ -19,12 +15,12 @@ class FileAccess: RCTEventEmitter {
         ]
     }
 
-    @objc override func supportedEvents() -> [String] {
+    @objc public func supportedEvents() -> [String] {
         return [NetworkHandler.FETCH_EVENT]
     }
 
     @objc(appendFile:withData:withEncoding:withResolver:withRejecter:)
-    func appendFile(path: String, data: String, encoding: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func appendFile(path: String, data: String, encoding: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             guard let encodedData = encoding == "base64" ? Data(base64Encoded: data) : data.data(using: .utf8),
                   let handle = FileHandle(forWritingAtPath: path.path()) else {
@@ -40,7 +36,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(cancelFetch:withResolver:withRejecter:)
-    func cancelFetch(requestId: NSNumber, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+    public func cancelFetch(requestId: NSNumber, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         if let call = fetchCalls.object(forKey: requestId) {
             fetchCalls.removeObject(forKey: requestId)
             call.cancel()
@@ -49,7 +45,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(concatFiles:withTarget:withResolver:withRejecter:)
-    func concatFiles(source: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func concatFiles(source: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             guard let input = InputStream(fileAtPath: source.path()), let output = OutputStream(toFileAtPath: target.path(), append: true) else {
                 reject("ERR", "Failed to concat '\(source)' to '\(target)'.", nil)
@@ -75,7 +71,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(cp:withTarget:withResolver:withRejecter:)
-    func cp(source: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func cp(source: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             do {
                 try FileManager.default.copyItem(atPath: source.path(), toPath: target.path())
@@ -87,7 +83,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(cpAsset:withTarget:withResolver:withRejecter:)
-    func cpAsset(asset: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func cpAsset(asset: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             guard let assetPath = Bundle.main.path(forResource: asset, ofType: nil) else {
                 reject("ENOENT", "Asset \(asset) not found", nil)
@@ -104,7 +100,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(cpExternal:withTargetName:withDir:withResolver:withRejecter:)
-    func cpExternal(source: String, targetName: String, dir: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func cpExternal(source: String, targetName: String, dir: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         let targetFolder: String
         switch dir {
         case "audio":
@@ -128,7 +124,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(df:withRejecter:)
-    func df(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func df(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             do {
                 let stat = try FileManager.default.attributesOfFileSystem(
@@ -146,15 +142,15 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(exists:withResolver:withRejecter:)
-    func exists(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+    public func exists(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             resolve(FileManager.default.fileExists(atPath: path.path()))
         }
     }
 
-    @objc(fetch:withResource:withConfig:)
-    func fetch(requestId: NSNumber, resource: String, config: NSDictionary) -> Void {
-        let handler = NetworkHandler(requestId: requestId, emitter: self) {
+    @objc(fetch:withResource:withConfig:withEmitter:)
+    public func fetch(requestId: NSNumber, resource: String, config: NSDictionary, emitter: RCTEventEmitter) -> Void {
+        let handler = NetworkHandler(requestId: requestId, emitter: emitter) {
             self.fetchCalls.removeObject(forKey: requestId)
         }
         if let call = handler.fetch(resource: resource, config: config) {
@@ -163,7 +159,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(getAppGroupDir:withResolver:withRejecter:)
-    func getAppGroupDir(groupName: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+    public func getAppGroupDir(groupName: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupName) else {
             reject("ERR", "Could not resolve app group directory. The group name '\(groupName)' is invalid.", nil)
             return
@@ -173,7 +169,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(hash:withAlgorithm:withResolver:withRejecter:)
-    func hash(path: String, algorithm: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func hash(path: String, algorithm: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             guard let data = NSData(contentsOfFile: path.path()) else {
                 reject("ERR", "Failed to read '\(path)'.", nil)
@@ -213,7 +209,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(isDir:withResolver:withRejecter:)
-    func isDir(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+    public func isDir(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             let status = self.checkIfIsDirectory(path: path.path())
             resolve(status.exists && status.isDirectory)
@@ -221,7 +217,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(ls:withResolver:withRejecter:)
-    func ls(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func ls(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             do {
                 try resolve(FileManager.default.contentsOfDirectory(atPath: path.path()))
@@ -232,7 +228,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(mkdir:withResolver:withRejecter:)
-    func mkdir(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func mkdir(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             do {
                 try FileManager.default.createDirectory(atPath: path.path(), withIntermediateDirectories: true, attributes: nil)
@@ -244,7 +240,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(mv:withTarget:withResolver:withRejecter:)
-    func mv(source: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func mv(source: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             do {
                 try? FileManager.default.removeItem(atPath: target.path())
@@ -257,7 +253,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(readFile:withEncoding:withResolver:withRejecter:)
-    func readFile(path: String, encoding: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func readFile(path: String, encoding: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             do {
                 if encoding == "base64" {
@@ -273,7 +269,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(stat:withResolver:withRejecter:)
-    func stat(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func stat(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             do {
                 resolve(try self.statFile(path: path))
@@ -284,7 +280,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(statDir:withResolver:withRejecter:)
-    func statDir(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func statDir(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             let base = URL(fileURLWithPath: path.path())
             do {
@@ -298,7 +294,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(unlink:withResolver:withRejecter:)
-    func unlink(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func unlink(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             do {
                 try FileManager.default.removeItem(atPath: path.path())
@@ -310,7 +306,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(unzip:withTarget:withResolver:withRejecter:)
-    func unzip(source: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func unzip(source: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             let sourceUrl = URL(fileURLWithPath: source.path())
             let targetUrl = URL(fileURLWithPath: target.path())
@@ -324,7 +320,7 @@ class FileAccess: RCTEventEmitter {
     }
 
     @objc(writeFile:withData:withEncoding:withResolver:withRejecter:)
-    func writeFile(path: String, data: String, encoding: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func writeFile(path: String, data: String, encoding: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             do {
                 if encoding == "base64" {

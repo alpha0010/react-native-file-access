@@ -82,30 +82,6 @@ export type FetchEvent =
   | FetchErrorEvent
   | FetchProgressEvent;
 
-export type FileStat = {
-  /**
-   * Filename does not include the path.
-   */
-  filename: string;
-  lastModified: number;
-  path: string;
-  /**
-   * File size in bytes.
-   */
-  size: number;
-  type: 'directory' | 'file';
-};
-
-/**
- * Values are in bytes.
- */
-export type FsStat = {
-  internal_free: number;
-  internal_total: number;
-  external_free?: number;
-  external_total?: number;
-};
-
 /**
  * MD5 and SHA-1 are insecure. Avoid when possible.
  */

@@ -17,7 +17,11 @@ If the app does not use autolinking, continue to the [manual install instruction
 
 ### Compatibility
 
-For React Native 0.64 and older, use 1.x.x. For React Native 0.65+, use 2.x.x.
+| React Native    | react-native-file-access |
+| --------------- | ------------------------ |
+| <= 0.64         | 1.x.x                    |
+| 0.65+, old arch | 2.x.x, 3.x.x             |
+| 0.71+, new arch | 3.x.x                    |
 
 ## Usage
 

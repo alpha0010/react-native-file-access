@@ -93,9 +93,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.example.reactnativefileaccess"
+    namespace "com.fileaccessexample"
     defaultConfig {
-        applicationId "com.example.reactnativefileaccess"
+        applicationId "com.fileaccessexample"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -165,8 +165,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    implementation project(':reactnativefileaccess')
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
