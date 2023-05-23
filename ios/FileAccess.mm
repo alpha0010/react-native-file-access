@@ -1,5 +1,34 @@
 #import "FileAccess.h"
-#import <ReactNativeFileAccess-Swift.h>
+
+// The following forward declare is extracted from the generated
+// 'ReactNativeFileAccess-Swift.h'. This file cannot be used directly due to
+// incompatibility with static frameworks.
+@interface FileAccessImpl : NSObject
+- (NSDictionary * _Nonnull)constantsToExport;
+- (NSArray<NSString *> * _Nonnull)supportedEvents;
+- (void)appendFile:(NSString * _Nonnull)path withData:(NSString * _Nonnull)data withEncoding:(NSString * _Nonnull)encoding withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)cancelFetch:(NSNumber * _Nonnull)requestId withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)concatFiles:(NSString * _Nonnull)source withTarget:(NSString * _Nonnull)target withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)cp:(NSString * _Nonnull)source withTarget:(NSString * _Nonnull)target withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)cpAsset:(NSString * _Nonnull)asset withTarget:(NSString * _Nonnull)target withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)cpExternal:(NSString * _Nonnull)source withTargetName:(NSString * _Nonnull)targetName withDir:(NSString * _Nonnull)dir withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)df:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)exists:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)fetch:(NSNumber * _Nonnull)requestId withResource:(NSString * _Nonnull)resource withConfig:(NSDictionary * _Nonnull)config withEmitter:(RCTEventEmitter * _Nonnull)emitter;
+- (void)getAppGroupDir:(NSString * _Nonnull)groupName withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)hash:(NSString * _Nonnull)path withAlgorithm:(NSString * _Nonnull)algorithm withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)isDir:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)ls:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)mkdir:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)mv:(NSString * _Nonnull)source withTarget:(NSString * _Nonnull)target withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)readFile:(NSString * _Nonnull)path withEncoding:(NSString * _Nonnull)encoding withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)stat:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)statDir:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)unlink:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)unzip:(NSString * _Nonnull)source withTarget:(NSString * _Nonnull)target withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)writeFile:(NSString * _Nonnull)path withData:(NSString * _Nonnull)data withEncoding:(NSString * _Nonnull)encoding withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (nonnull instancetype)init;
+@end
 
 @implementation FileAccess
 FileAccessImpl *impl;
