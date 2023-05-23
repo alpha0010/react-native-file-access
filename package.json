@@ -13,7 +13,7 @@
     "android",
     "ios",
     "cpp",
-    "react-native-file-access.podspec",
+    "*.podspec",
     "!android/build",
     "!ios/build",
     "!**/__tests__",
