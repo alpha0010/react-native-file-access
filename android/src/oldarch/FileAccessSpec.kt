@@ -8,6 +8,10 @@ import com.facebook.react.bridge.ReadableMap
 abstract class FileAccessSpec internal constructor(context: ReactApplicationContext) :
   ReactContextBaseJavaModule(context) {
 
+  protected abstract fun getTypedExportedConstants(): MutableMap<String, String?>
+
+  override fun getConstants() = getTypedExportedConstants()
+
   abstract fun addListener(eventType: String)
   abstract fun removeListeners(count: Double)
   abstract fun appendFile(path: String, data: String, encoding: String, promise: Promise)

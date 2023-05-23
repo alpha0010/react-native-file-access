@@ -35,7 +35,7 @@ class FileAccessModule internal constructor(context: ReactApplicationContext) :
     return NAME
   }
 
-  override fun getConstants(): MutableMap<String, String?> {
+  override fun getTypedExportedConstants(): MutableMap<String, String?> {
     val sdCardDir = try {
       // Search via env may not be reliable. Recent Android versions
       // discourage/restrict full access to public locations.
