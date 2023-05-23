@@ -1,5 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
-import type { Directories, FileStat, FsStat, Spec } from './NativeFileAccess';
+import type { FileStat, FsStat, Spec } from './NativeFileAccess';
 import type {
   AssetType,
   Encoding,
@@ -313,7 +313,44 @@ export const FileSystem = {
   },
 };
 
-export const Dirs: Directories = FileAccessModule
+export const Dirs: {
+  /**
+   * Temporary files. System/user may delete these if device storage is low.
+   */
+  CacheDir: string;
+
+  /**
+   * System recommended location for SQLite files.
+   *
+   * Android only.
+   */
+  DatabaseDir?: string;
+
+  /**
+   * Persistent data. Generally user created content.
+   */
+  DocumentDir: string;
+
+  /**
+   * Persistent app internal data.
+   *
+   * iOS & MacOS only.
+   */
+  LibraryDir?: string;
+
+  /**
+   * App's default root directory.
+   */
+  MainBundleDir: string;
+
+  /**
+   * Root path to removable media. Prefer `cpExternal()` when possible, as
+   * Android discourages this access method.
+   *
+   * Android only.
+   */
+  SDCardDir?: string;
+} = FileAccessModule
   ? FileAccessNative.getConstants()
   : new Proxy(
       { CacheDir: '', DocumentDir: '', MainBundleDir: '' },

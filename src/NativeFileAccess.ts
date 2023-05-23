@@ -1,45 +1,6 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
-export type Directories = {
-  /**
-   * Temporary files. System/user may delete these if device storage is low.
-   */
-  CacheDir: string;
-
-  /**
-   * System recommended location for SQLite files.
-   *
-   * Android only.
-   */
-  DatabaseDir?: string;
-
-  /**
-   * Persistent data. Generally user created content.
-   */
-  DocumentDir: string;
-
-  /**
-   * Persistent app internal data.
-   *
-   * iOS & MacOS only.
-   */
-  LibraryDir?: string;
-
-  /**
-   * App's default root directory.
-   */
-  MainBundleDir: string;
-
-  /**
-   * Root path to removable media. Prefer `cpExternal()` when possible, as
-   * Android discourages this access method.
-   *
-   * Android only.
-   */
-  SDCardDir?: string;
-};
-
 export type FileStat = {
   /**
    * Filename does not include the path.
@@ -86,8 +47,9 @@ export interface Spec extends TurboModule {
     resource: string,
     init: {
       body?: string;
-      headers?: { [key: string]: string };
+      headers?: Object;
       method?: string;
+      network?: string;
       path?: string;
     }
   ): void;
@@ -95,7 +57,14 @@ export interface Spec extends TurboModule {
    * Only defined on iOS & MacOS.
    */
   getAppGroupDir(groupName: string): Promise<string>;
-  getConstants(): Directories;
+  getConstants(): {
+    CacheDir: string;
+    DatabaseDir?: string;
+    DocumentDir: string;
+    LibraryDir?: string;
+    MainBundleDir: string;
+    SDCardDir?: string;
+  };
   hash(path: string, algorithm: string): Promise<string>;
   isDir(path: string): Promise<boolean>;
   ls(path: string): Promise<string[]>;
