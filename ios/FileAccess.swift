@@ -285,7 +285,7 @@ public class FileAccess : NSObject {
             let base = URL(fileURLWithPath: path.path())
             do {
                 try resolve(FileManager.default.contentsOfDirectory(atPath: path.path())
-                    .map { try self.statFile(path: base.appendingPathComponent($0).path) }
+                    .compactMap { try? self.statFile(path: base.appendingPathComponent($0).path) }
                 )
             } catch {
                 reject("ERR", "Failed to list '\(path)'.", error)
