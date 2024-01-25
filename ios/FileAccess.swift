@@ -77,7 +77,7 @@ public class FileAccess : NSObject {
                 try FileManager.default.copyItem(atPath: source.path(), toPath: target.path())
                 resolve(nil)
             } catch {
-                reject("ERR", "Failed to copy '\(source)' to '\(target)'.", error)
+                reject("ERR", "Failed to copy '\(source)' to '\(target)'. \(error.localizedDescription)", error)
             }
         }
     }
@@ -94,7 +94,7 @@ public class FileAccess : NSObject {
                 try FileManager.default.copyItem(atPath: assetPath, toPath: target.path())
                 resolve(nil)
             } catch {
-                reject("ERR", "Failed to copy '\(asset)' to '\(target)'.", error)
+                reject("ERR", "Failed to copy '\(asset)' to '\(target)'. \(error.localizedDescription)", error)
             }
         }
     }
@@ -136,7 +136,7 @@ public class FileAccess : NSObject {
                     "internal_total": stat[.systemSize]
                 ])
             } catch {
-                reject("ERR", "Failed to stat filesystem.", error)
+                reject("ERR", "Failed to stat filesystem. \(error.localizedDescription)", error)
             }
         }
     }
@@ -222,7 +222,7 @@ public class FileAccess : NSObject {
             do {
                 try resolve(FileManager.default.contentsOfDirectory(atPath: path.path()))
             } catch {
-                reject("ERR", "Failed to list '\(path)'.", error)
+                reject("ERR", "Failed to list '\(path)'. \(error.localizedDescription)", error)
             }
         }
     }
@@ -234,7 +234,7 @@ public class FileAccess : NSObject {
                 try FileManager.default.createDirectory(atPath: path.path(), withIntermediateDirectories: true, attributes: nil)
                 resolve(path)
             } catch {
-                reject("ERR", "Failed to create directory '\(path)'.", error)
+                reject("ERR", "Failed to create directory '\(path)'. \(error.localizedDescription)", error)
             }
         }
     }
@@ -247,7 +247,7 @@ public class FileAccess : NSObject {
                 try FileManager.default.moveItem(atPath: source.path(), toPath: target.path())
                 resolve(nil)
             } catch {
-                reject("ERR", "Failed to rename '\(source)' to '\(target)'.", error)
+                reject("ERR", "Failed to rename '\(source)' to '\(target)'. \(error.localizedDescription)", error)
             }
         }
     }
@@ -263,7 +263,7 @@ public class FileAccess : NSObject {
                     try resolve(String(contentsOfFile: path.path()))
                 }
             } catch {
-                reject("ERR", "Failed to read '\(path)'.", error)
+                reject("ERR", "Failed to read '\(path)'. \(error.localizedDescription)", error)
             }
         }
     }
@@ -274,7 +274,7 @@ public class FileAccess : NSObject {
             do {
                 resolve(try self.statFile(path: path))
             } catch {
-                reject("ERR", "Failed to stat '\(path)'.", error)
+                reject("ERR", "Failed to stat '\(path)'. \(error.localizedDescription)", error)
             }
         }
     }
@@ -288,7 +288,7 @@ public class FileAccess : NSObject {
                     .compactMap { try? self.statFile(path: base.appendingPathComponent($0).path) }
                 )
             } catch {
-                reject("ERR", "Failed to list '\(path)'.", error)
+                reject("ERR", "Failed to list '\(path)'. \(error.localizedDescription)", error)
             }
         }
     }
@@ -300,7 +300,7 @@ public class FileAccess : NSObject {
                 try FileManager.default.removeItem(atPath: path.path())
                 resolve(nil)
             } catch {
-                reject("ERR", "Failed to unlink '\(path)'.", error)
+                reject("ERR", "Failed to unlink '\(path)'. \(error.localizedDescription)", error)
             }
         }
     }
@@ -314,7 +314,7 @@ public class FileAccess : NSObject {
                 try FileManager.default.unzipItem(at: sourceUrl, to: targetUrl)
                 resolve(nil)
             } catch {
-                reject("ERR", "Failed to unzip '\(source)' to '\(target)'.", error)
+                reject("ERR", "Failed to unzip '\(source)' to '\(target)'. \(error.localizedDescription)", error)
             }
         }
     }
@@ -335,7 +335,7 @@ public class FileAccess : NSObject {
                 }
                 resolve(nil)
             } catch {
-                reject("ERR", "Failed to write to '\(path)'.", error)
+                reject("ERR", "Failed to write to '\(path)'. \(error.localizedDescription)", error)
             }
         }
     }
