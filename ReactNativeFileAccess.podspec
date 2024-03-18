@@ -19,6 +19,13 @@ Pod::Spec.new do |s|
   s.dependency "React-Core"
   s.dependency "ZIPFoundation", "0.9.11"
 
+  if defined?($RNFANoPrivacyAPI)
+    Pod::UI.puts "#{s.name}: Removing privacy sensitive API calls"
+    s.pod_target_xcconfig = {
+      "OTHER_SWIFT_FLAGS" => "-DNO_PRIVACY_API"
+    }
+  end
+
   # Don't install the dependencies when we run `pod install` in the old architecture.
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
     s.compiler_flags = folly_compiler_flags + " -DRCT_NEW_ARCH_ENABLED=1"

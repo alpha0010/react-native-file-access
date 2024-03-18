@@ -126,6 +126,9 @@ public class FileAccess : NSObject {
     @objc(df:withRejecter:)
     public func df(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
+#if NO_PRIVACY_API
+            reject("ERR", "Filesystem stat API disabled via compile time flag.", nil)
+#else
             do {
                 let stat = try FileManager.default.attributesOfFileSystem(
                     forPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
@@ -138,6 +141,7 @@ public class FileAccess : NSObject {
             } catch {
                 reject("ERR", "Failed to stat filesystem. \(error.localizedDescription)", error)
             }
+#endif
         }
     }
 
@@ -350,9 +354,14 @@ public class FileAccess : NSObject {
     private func statFile(path: String) throws -> [String : Any?] {
         let pathUrl = URL(fileURLWithPath: path.path())
         let attrs = try FileManager.default.attributesOfItem(atPath: path.path())
+#if NO_PRIVACY_API
+        let lastModified = 0
+#else
+        let lastModified = 1000 * (attrs[.modificationDate] as! NSDate).timeIntervalSince1970
+#endif
         return [
             "filename": pathUrl.lastPathComponent,
-            "lastModified": 1000 * (attrs[.modificationDate] as! NSDate).timeIntervalSince1970,
+            "lastModified": lastModified,
             "path": pathUrl.path,
             "size": attrs[.size],
             "type": self.checkIfIsDirectory(path: path).isDirectory ? "directory" : "file"

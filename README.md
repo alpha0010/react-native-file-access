@@ -13,6 +13,15 @@ npm install react-native-file-access
 cd ios && pod install
 ```
 
+Apple restricts usage of certain privacy sensitive API calls. If you do not
+use disk space measurements or file timestamps, define the following variable
+in your Podfile to exclude restricted API calls.
+[More details.](https://github.com/alpha0010/react-native-file-access/issues/73)
+
+```ruby
+$RNFANoPrivacyAPI = true
+```
+
 If the app does not use autolinking, continue to the [manual install instructions](https://github.com/alpha0010/react-native-file-access/wiki/Manual-Installation) in the wiki.
 
 ### Compatibility
