@@ -164,6 +164,11 @@ type ManagedFetchResult = {
 - Read the content of a file.
   - Default encoding of returned string is utf8.
 
+`FileSystem.readFileChunk(path: string, offset: number, length: number, encoding?: 'utf8' | 'base64'): Promise<string>`
+
+- Read a chunk of the content of a file, starting from byte at `offset`, reading for `length` bytes.
+  - Default encoding of returned string is utf8.
+
 ```
 FileSystem.stat(path: string): Promise<FileStat>
 

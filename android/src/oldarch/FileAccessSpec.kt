@@ -30,6 +30,7 @@ abstract class FileAccessSpec internal constructor(context: ReactApplicationCont
   abstract fun mkdir(path: String, promise: Promise)
   abstract fun mv(source: String, target: String, promise: Promise)
   abstract fun readFile(path: String, encoding: String, promise: Promise)
+  abstract fun readFileChunk(path: String, offset: Double, length: Double, encoding: String, promise: Promise)
   abstract fun stat(path: String, promise: Promise)
   abstract fun statDir(path: String, promise: Promise)
   abstract fun unlink(path: String, promise: Promise)
