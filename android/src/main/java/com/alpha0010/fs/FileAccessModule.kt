@@ -404,16 +404,20 @@ class FileAccessModule internal constructor(context: ReactApplicationContext) :
   override fun readFileChunk(path: String, offset: Double, length: Double, encoding: String, promise: Promise) {
     ioScope.launch {
       try {
-        val inputStream = openForReading(path);
-        inputStream.skip(offset.toLong())
-        val data = ByteArray(length.toInt())
-        inputStream.read(data);
-
-        if (encoding == "base64") {
-          promise.resolve(Base64.encodeToString(data, Base64.NO_WRAP))
-        } else {
-          promise.resolve(data.decodeToString())
+        val data = openForReading(path).use { inputStream ->
+          inputStream.skip(offset.toLong())
+          val data = ByteArray(length.toInt())
+          inputStream.read(data)
+          data
         }
+
+        val result = if (encoding == "base64") {
+          Base64.encodeToString(data, Base64.NO_WRAP)
+        } else {
+          data.decodeToString()
+        }
+
+        promise.resolve(result)
       } catch (e: Throwable) {
         promise.reject(e)
       }
