@@ -278,7 +278,12 @@ export const FileSystem = {
   /**
    * Read a chunk of the content of a file.
    */
-  readFileChunk(path: string, offset: number, length: number, encoding: Encoding = 'utf8') {
+  readFileChunk(
+    path: string,
+    offset: number,
+    length: number,
+    encoding: Encoding = 'utf8'
+  ) {
     return FileAccessNative.readFileChunk(path, offset, length, encoding);
   },
 

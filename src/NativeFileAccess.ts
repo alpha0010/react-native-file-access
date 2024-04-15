@@ -71,7 +71,12 @@ export interface Spec extends TurboModule {
   mkdir(path: string): Promise<string>;
   mv(source: string, target: string): Promise<void>;
   readFile(path: string, encoding: string): Promise<string>;
-  readFileChunk(path: string, offset: number, length: number, encoding: string): Promise<string>;
+  readFileChunk(
+    path: string,
+    offset: number,
+    length: number,
+    encoding: string
+  ): Promise<string>;
   stat(path: string): Promise<FileStat>;
   statDir(path: string): Promise<FileStat[]>;
   unlink(path: string): Promise<void>;
