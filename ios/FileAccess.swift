@@ -272,6 +272,33 @@ public class FileAccess : NSObject {
         }
     }
 
+    @objc(readFileChunk:withOffset:withLength:withEncoding:withResolver:withRejecter:)
+    public func readFileChunk(path: String, offset: NSNumber, length: NSNumber, encoding: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        DispatchQueue.global().async {
+            do {
+                let fileHandle = try FileHandle(forReadingFrom: URL(fileURLWithPath: path.path()))
+                defer {
+                    fileHandle.closeFile()
+                }
+                
+                fileHandle.seek(toFileOffset: UInt64(truncating: offset))
+                let binaryData = fileHandle.readData(ofLength: Int(truncating: length))
+                
+                if encoding == "base64" {
+                    resolve(binaryData.base64EncodedString())
+                } else {
+                    if let content = String(data: binaryData, encoding: .utf8) {
+                        resolve(content)
+                    } else {
+                        reject("ERR", "Failed to decode content from file '\(path)' with specified encoding.", nil)
+                    }
+                }
+            } catch {
+                reject("ERR", "Failed to read '\(path)'. \(error.localizedDescription)", error)
+            }
+        }
+    }
+
     @objc(stat:withResolver:withRejecter:)
     public func stat(path: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {

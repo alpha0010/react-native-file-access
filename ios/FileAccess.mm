@@ -22,6 +22,7 @@
 - (void)mkdir:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)mv:(NSString * _Nonnull)source withTarget:(NSString * _Nonnull)target withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)readFile:(NSString * _Nonnull)path withEncoding:(NSString * _Nonnull)encoding withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)readFileChunk:(NSString * _Nonnull)path withOffset:(NSNumber * _Nonnull)offset withLength:(NSNumber * _Nonnull)length withEncoding:(NSString * _Nonnull)encoding withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)stat:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)statDir:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)unlink:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
@@ -169,6 +170,19 @@ RCT_EXPORT_METHOD(readFile:(NSString *)path
 {
     [impl readFile:path withEncoding:encoding withResolver:resolve withRejecter:reject];
 }
+
+RCT_EXPORT_METHOD(readFileChunk:(NSString *)path
+                  offset:(double)offset
+                  length:(double)length
+                  encoding:(NSString *)encoding
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+{
+    NSNumber *offsetNumber = @(offset);
+    NSNumber *lengthNumber = @(length);
+    [impl readFileChunk:path withOffset:offsetNumber withLength:lengthNumber withEncoding:encoding withResolver:resolve withRejecter:reject];
+}
+
 
 RCT_EXPORT_METHOD(stat:(NSString *)path
                   resolve:(RCTPromiseResolveBlock)resolve
