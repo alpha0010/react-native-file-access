@@ -105,6 +105,16 @@ export function App() {
           return prev.slice();
         })
       )
+      .then(() => FileSystem.readFileChunk(Dirs.CacheDir + '/test.txt', 5, 10))
+      .then((res) =>
+        setInfo((prev) => {
+          prev.push({
+            key: 'readFileChunk(CacheDir/test.txt, 5, 10)',
+            value: JSON.stringify(res),
+          });
+          return prev.slice();
+        })
+      )
       .then(() => FileSystem.hash(Dirs.CacheDir + '/test.txt', 'MD5'))
       .then((res) =>
         setInfo((prev) => {
