@@ -12,7 +12,11 @@ API 30 or higher.
 npm install react-native-file-access
 cd ios && pod install
 ```
-
+``` Note:
+issue with iOS Linking:
+  if iOS is unable to link automatically got to you ios podFile and add this:
+    pod 'react-native-file-access', :path => '<Location_to_your_node_modules>/node_modules/react-native-file-access'
+```
 Apple restricts usage of certain privacy sensitive API calls. If you do not
 use disk space measurements or file timestamps, define the following variable
 in your Podfile to exclude restricted API calls.
