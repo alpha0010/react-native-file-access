@@ -15,20 +15,17 @@ class FileAccessPackage : TurboReactPackage() {
     }
   }
 
-  override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
-    return ReactModuleInfoProvider {
-      val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
-      val isTurboModule: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-      moduleInfos[FileAccessModule.NAME] = ReactModuleInfo(
-        FileAccessModule.NAME,
-        FileAccessModule.NAME,
-        false,  // canOverrideExistingModule
-        false,  // needsEagerInit
-        true,  // hasConstants
-        false,  // isCxxModule
-        isTurboModule // isTurboModule
+  override fun getReactModuleInfoProvider() = ReactModuleInfoProvider {
+    mapOf(
+      FileAccessModule.NAME to ReactModuleInfo(
+        _name = FileAccessModule.NAME,
+        _className = FileAccessModule.NAME,
+        _canOverrideExistingModule = false,
+        _needsEagerInit = false,
+        isCxxModule = false,
+        isTurboModule = true
       )
-      moduleInfos
-    }
+    )
+  }
   }
 }
