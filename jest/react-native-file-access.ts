@@ -121,6 +121,17 @@ class FileSystemMock {
   });
 
   /**
+   * Create a hard link.
+   */
+  public hardlink = jest.fn(async (source: string, target: string) => {
+    const sourceData = this.filesystem.get(source);
+    if (!sourceData) {
+      throw new Error(`Source file ${source} not found`);
+    }
+    this.filesystem.set(target, sourceData);
+  });
+
+  /**
    * Hash the file content.
    */
   public hash = jest.fn(async (path: string, algorithm: HashAlgorithm) => {
@@ -165,6 +176,17 @@ class FileSystemMock {
       type: 'file',
     })
   );
+
+  /**
+   * Create a symbolic link.
+   */
+  public symlink = jest.fn(async (source: string, target: string) => {
+    const sourceData = this.filesystem.get(source);
+    if (!sourceData) {
+      throw new Error(`Source file ${source} not found`);
+    }
+    this.filesystem.set(target, sourceData);
+  });
 
   /**
    * Delete a file.
