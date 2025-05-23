@@ -138,6 +138,11 @@ type ManagedFetchResult = {
   - App groups are used on iOS/MacOS for storing content, which is shared between apps.
   - This is e.g. useful for sharing data between your iOS/MacOS app and a widget or a watch app.
 
+`FileSystem.hardlink(source: string, target: string): Promise<void>`
+
+- Create a hard link at target pointing to source.
+  - Note: On Android, creating hardlinks requires root access.
+
 `FilesSystem.hash(path: string, algorithm: 'MD5' | 'SHA-1' | 'SHA-224' | 'SHA-256' | 'SHA-384' | 'SHA-512'): Promise<string>`
 
 - Hash the file content.
@@ -186,6 +191,10 @@ type FileStat = {
 `FileSystem.statDir(path: string): Promise<FileStat[]>`
 
 - Read metadata of all files in a directory.
+
+`FileSystem.symlink(source: string, target: string): Promise<void>`
+
+- Create a symbolic link at target pointing to source.
 
 `FileSystem.unlink(path: string): Promise<void>`
 
