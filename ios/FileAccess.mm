@@ -16,6 +16,7 @@
 - (void)exists:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)fetch:(NSNumber * _Nonnull)requestId withResource:(NSString * _Nonnull)resource withConfig:(NSDictionary * _Nonnull)config withEmitter:(RCTEventEmitter * _Nonnull)emitter;
 - (void)getAppGroupDir:(NSString * _Nonnull)groupName withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)hardlink:(NSString * _Nonnull)source withTarget:(NSString * _Nonnull)target withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)hash:(NSString * _Nonnull)path withAlgorithm:(NSString * _Nonnull)algorithm withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)isDir:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)ls:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
@@ -25,6 +26,7 @@
 - (void)readFileChunk:(NSString * _Nonnull)path withOffset:(NSNumber * _Nonnull)offset withLength:(NSNumber * _Nonnull)length withEncoding:(NSString * _Nonnull)encoding withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)stat:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)statDir:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
+- (void)symlink:(NSString * _Nonnull)source withTarget:(NSString * _Nonnull)target withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)unlink:(NSString * _Nonnull)path withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)unzip:(NSString * _Nonnull)source withTarget:(NSString * _Nonnull)target withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 - (void)writeFile:(NSString * _Nonnull)path withData:(NSString * _Nonnull)data withEncoding:(NSString * _Nonnull)encoding withResolver:(RCTPromiseResolveBlock _Nonnull)resolve withRejecter:(RCTPromiseRejectBlock _Nonnull)reject;
@@ -126,6 +128,14 @@ RCT_EXPORT_METHOD(getAppGroupDir:(NSString *)groupName
     [impl getAppGroupDir:groupName withResolver:resolve withRejecter:reject];
 }
 
+RCT_EXPORT_METHOD(hardlink:(NSString *)source
+                  target:(NSString *)target
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+{
+    [impl hardlink:source withTarget:target withResolver:resolve withRejecter:reject];
+}
+
 RCT_EXPORT_METHOD(hash:(NSString *)path
                   algorithm:(NSString *)algorithm
                   resolve:(RCTPromiseResolveBlock)resolve
@@ -196,6 +206,14 @@ RCT_EXPORT_METHOD(statDir:(NSString *)path
                   reject:(RCTPromiseRejectBlock)reject)
 {
     [impl statDir:path withResolver:resolve withRejecter:reject];
+}
+
+RCT_EXPORT_METHOD(symlink:(NSString *)source
+                  target:(NSString *)target
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+{
+    [impl symlink:source withTarget:target withResolver:resolve withRejecter:reject];
 }
 
 RCT_EXPORT_METHOD(unlink:(NSString *)path

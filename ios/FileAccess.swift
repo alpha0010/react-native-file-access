@@ -172,6 +172,18 @@ public class FileAccess : NSObject {
         resolve(groupURL.path)
     }
 
+    @objc(hardlink:withTarget:withResolver:withRejecter:)
+    public func hardlink(source: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        DispatchQueue.global().async {
+            do {
+                try FileManager.default.linkItem(atPath: source.path(), toPath: target.path())
+                resolve(nil)
+            } catch {
+                reject("ERR", "Failed to create hard link from '\(source)' to '\(target)'. \(error.localizedDescription)", error)
+            }
+        }
+    }
+
     @objc(hash:withAlgorithm:withResolver:withRejecter:)
     public func hash(path: String, algorithm: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
@@ -280,10 +292,10 @@ public class FileAccess : NSObject {
                 defer {
                     fileHandle.closeFile()
                 }
-                
+
                 fileHandle.seek(toFileOffset: UInt64(truncating: offset))
                 let binaryData = fileHandle.readData(ofLength: Int(truncating: length))
-                
+
                 if encoding == "base64" {
                     resolve(binaryData.base64EncodedString())
                 } else {
@@ -320,6 +332,18 @@ public class FileAccess : NSObject {
                 )
             } catch {
                 reject("ERR", "Failed to list '\(path)'. \(error.localizedDescription)", error)
+            }
+        }
+    }
+
+    @objc(symlink:withTarget:withResolver:withRejecter:)
+    public func symlink(source: String, target: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        DispatchQueue.global().async {
+            do {
+                try FileManager.default.createSymbolicLink(atPath: target.path(), withDestinationPath: source.path())
+                resolve(nil)
+            } catch {
+                reject("ERR", "Failed to create symbolic link from '\(source)' to '\(target)'. \(error.localizedDescription)", error)
             }
         }
     }
