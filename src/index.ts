@@ -237,6 +237,15 @@ export const FileSystem = {
   },
 
   /**
+   * Create a hard link.
+   *
+   * Creates a hard link at target pointing to source.
+   */
+  hardlink(source: string, target: string) {
+    return FileAccessNative.hardlink(source, target);
+  },
+
+  /**
    * Hash the file content.
    */
   hash(path: string, algorithm: HashAlgorithm) {
@@ -304,6 +313,15 @@ export const FileSystem = {
    */
   statDir(path: string): Promise<FileStat[]> {
     return FileAccessNative.statDir(path);
+  },
+
+  /**
+   * Create a symbolic link.
+   *
+   * Creates a symbolic link at target pointing to source.
+   */
+  symlink(source: string, target: string) {
+    return FileAccessNative.symlink(source, target);
   },
 
   /**

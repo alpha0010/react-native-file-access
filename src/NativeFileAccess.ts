@@ -65,6 +65,7 @@ export interface Spec extends TurboModule {
     MainBundleDir: string;
     SDCardDir?: string;
   };
+  hardlink(source: string, target: string): Promise<void>;
   hash(path: string, algorithm: string): Promise<string>;
   isDir(path: string): Promise<boolean>;
   ls(path: string): Promise<string[]>;
@@ -79,6 +80,7 @@ export interface Spec extends TurboModule {
   ): Promise<string>;
   stat(path: string): Promise<FileStat>;
   statDir(path: string): Promise<FileStat[]>;
+  symlink(source: string, target: string): Promise<void>;
   unlink(path: string): Promise<void>;
   unzip(source: string, target: string): Promise<void>;
   writeFile(path: string, data: string, encoding: string): Promise<void>;

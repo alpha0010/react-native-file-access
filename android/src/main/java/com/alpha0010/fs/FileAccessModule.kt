@@ -25,6 +25,7 @@ import java.io.OutputStream
 import java.lang.ref.WeakReference
 import java.security.MessageDigest
 import java.util.zip.ZipInputStream
+import java.nio.file.Files
 
 class FileAccessModule internal constructor(context: ReactApplicationContext) :
   FileAccessSpec(context) {
@@ -276,6 +277,40 @@ class FileAccessModule internal constructor(context: ReactApplicationContext) :
   }
 
   @ReactMethod
+  override fun hardlink(source: String, target: String, promise: Promise) {
+    ioScope.launch {
+      try {
+        if (source.isContentUri() || target.isContentUri()) {
+          promise.reject("ERR", "Hard links are not supported for content URIs")
+          return@launch
+        }
+
+        val sourceFile = parsePathToFile(source)
+        val targetFile = parsePathToFile(target)
+
+        if (!sourceFile.exists()) {
+          promise.reject("ENOENT", "Source file '$source' does not exist")
+          return@launch
+        }
+
+        if (targetFile.exists()) {
+          promise.reject("EEXIST", "Target file '$target' already exists")
+          return@launch
+        }
+
+        try {
+          Files.createLink(targetFile.toPath(), sourceFile.toPath())
+          promise.resolve(null)
+        } catch (e: IOException) {
+          promise.reject("ERR", "Failed to create hard link: ${e.message}")
+        }
+      } catch (e: Throwable) {
+        promise.reject(e)
+      }
+    }
+  }
+
+  @ReactMethod
   override fun hash(path: String, algorithm: String, promise: Promise) {
     ioScope.launch {
       try {
@@ -449,6 +484,40 @@ class FileAccessModule internal constructor(context: ReactApplicationContext) :
           .listFiles()
           .forEach { fileList.pushMap(statFile(it)) }
         promise.resolve(fileList)
+      } catch (e: Throwable) {
+        promise.reject(e)
+      }
+    }
+  }
+
+  @ReactMethod
+  override fun symlink(source: String, target: String, promise: Promise) {
+    ioScope.launch {
+      try {
+        if (source.isContentUri() || target.isContentUri()) {
+          promise.reject("ERR", "Symbolic links are not supported for content URIs")
+          return@launch
+        }
+
+        val sourceFile = parsePathToFile(source)
+        val targetFile = parsePathToFile(target)
+
+        if (!sourceFile.exists()) {
+          promise.reject("ENOENT", "Source file '$source' does not exist")
+          return@launch
+        }
+
+        if (targetFile.exists()) {
+          promise.reject("EEXIST", "Target file '$target' already exists")
+          return@launch
+        }
+
+        try {
+          Files.createSymbolicLink(targetFile.toPath(), sourceFile.toPath())
+          promise.resolve(null)
+        } catch (e: IOException) {
+          promise.reject("ERR", "Failed to create symbolic link: ${e.message}")
+        }
       } catch (e: Throwable) {
         promise.reject(e)
       }
