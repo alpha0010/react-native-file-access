@@ -78,7 +78,12 @@ function registerFetchListener(
         reject(new Error(event.message));
       } else if (event.state === 'complete') {
         listener.remove();
+        const headersLower = new Map<string, string>();
+        for (const [key, value] of Object.entries(event.headers)) {
+          headersLower.set(key.toLowerCase(), value);
+        }
         resolve({
+          getHeader: (header: string) => headersLower.get(header.toLowerCase()),
           headers: event.headers,
           ok: event.ok,
           redirected: event.redirected,

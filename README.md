@@ -97,6 +97,7 @@ FilesSystem.fetch(
 ): Promise<FetchResult>
 
 type FetchResult = {
+  getHeader: (header: string) => string | undefined;
   headers: { [key: string]: string };
   ok: boolean;
   redirected: boolean;

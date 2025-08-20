@@ -28,6 +28,11 @@ export type FetchInit = {
 
 export type FetchResult = {
   /**
+   * Get an HTTP response header value. (Case insensitive matching.)
+   */
+  getHeader: (header: string) => string | undefined;
+
+  /**
    * Response HTTP headers.
    */
   headers: { [key: string]: string };
@@ -61,7 +66,7 @@ export type FetchResult = {
 export type FetchCompleteEvent = {
   requestId: number;
   state: 'complete';
-} & FetchResult;
+} & Omit<FetchResult, 'getHeader'>;
 
 export type FetchErrorEvent = {
   requestId: number;

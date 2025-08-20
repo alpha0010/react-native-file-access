@@ -215,10 +215,16 @@ export function App() {
     })
       .then((res) => {
         setInfo((prev) => {
-          prev.push({
-            key: 'fetch(https://example.com)',
-            value: JSON.stringify(res),
-          });
+          prev.push(
+            {
+              key: 'fetch(https://example.com)',
+              value: JSON.stringify(res),
+            },
+            {
+              key: 'getHeader(cOntEnt-tYPe)',
+              value: res.getHeader('cOntEnt-tYPe') ?? 'undefined',
+            }
+          );
           return prev.slice();
         });
         return FileSystem.readFile(Dirs.CacheDir + '/download.html');

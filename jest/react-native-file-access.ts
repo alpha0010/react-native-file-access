@@ -98,6 +98,7 @@ class FileSystemMock {
         this.filesystem.set(init.path, `[Mock fetch data for '${resource}']`);
       }
       return {
+        getHeader: () => undefined,
         headers: {},
         ok: true,
         redirected: false,
