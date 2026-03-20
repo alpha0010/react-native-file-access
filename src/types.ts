@@ -8,24 +8,6 @@ export type Encoding = 'utf8' | 'base64';
 
 export type ExternalDir = 'audio' | 'downloads' | 'images' | 'video';
 
-export type NetworkType = 'any' | 'unmetered';
-
-export type FetchInit = {
-  body?: string;
-  headers?: { [key: string]: string };
-  method?: string;
-
-  /**
-   * Allowed connection. Throws if specified connection is unavailable.
-   */
-  network?: NetworkType;
-
-  /**
-   * Output path.
-   */
-  path?: string;
-};
-
 export type FetchResult = {
   /**
    * Get an HTTP response header value. (Case insensitive matching.)
@@ -62,30 +44,6 @@ export type FetchResult = {
    */
   url: string;
 };
-
-export type FetchCompleteEvent = {
-  requestId: number;
-  state: 'complete';
-} & Omit<FetchResult, 'getHeader'>;
-
-export type FetchErrorEvent = {
-  requestId: number;
-  state: 'error';
-  message: string;
-};
-
-export type FetchProgressEvent = {
-  requestId: number;
-  state: 'progress';
-  bytesRead: number;
-  contentLength: number;
-  done: boolean;
-};
-
-export type FetchEvent =
-  | FetchCompleteEvent
-  | FetchErrorEvent
-  | FetchProgressEvent;
 
 /**
  * MD5 and SHA-1 are insecure. Avoid when possible.

@@ -1,21 +1,26 @@
+public typealias EventEmitter = (NSDictionary) -> Void
+
 class NetworkHandler: NSObject, URLSessionDownloadDelegate {
-    public static let FETCH_EVENT = "FetchEvent"
     private static let MIN_EVENT_INTERVAL: TimeInterval = 0.15
 
     private var currentUrl = ""
     private var destination: String?
-    private let emitter: RCTEventEmitter
+    private let emitOnProgress: EventEmitter
+    private let emitOnError: EventEmitter
+    private let emitOnComplete: EventEmitter
     private var lastEventTime = Date.distantPast
     private let onComplete: () -> Void
     private let requestId: Int
 
-    init(requestId: NSNumber, emitter: RCTEventEmitter, onComplete: @escaping () -> Void) {
-        self.emitter = emitter
-        self.requestId = requestId.intValue
+    init(requestId: Int, emitOnProgress: @escaping EventEmitter, emitOnError: @escaping EventEmitter, emitOnComplete: @escaping EventEmitter, onComplete: @escaping () -> Void) {
+        self.emitOnProgress = emitOnProgress
+        self.emitOnError = emitOnError
+        self.emitOnComplete = emitOnComplete
+        self.requestId = requestId
         self.onComplete = onComplete
     }
 
-    func fetch(resource: String, config: NSDictionary) -> URLSessionDownloadTask? {
+    func fetch(resource: String, body: String?, headers: NSDictionary?, method: String?, network: String?, path: String?) -> URLSessionDownloadTask? {
         guard let url = URL(string: resource) else {
             onComplete()
             onFetchError("'\(resource)' is not a url.")
@@ -23,16 +28,16 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
         }
 
         currentUrl = resource
-        destination = (config["path"] as? String)?.path()
+        destination = path?.path()
 
         var request = URLRequest(url: url)
-        if let method = config["method"] as? String {
+        if let method = method {
             request.httpMethod = method
         }
-        if let body = config["body"] as? String {
+        if let body = body {
             request.httpBody = body.data(using: .utf8)
         }
-        if let headers = config["headers"] as? NSDictionary {
+        if let headers = headers {
             for (key, value) in headers {
                 if let headerName = key as? String, let headerValue = value as? String {
                     request.addValue(headerValue, forHTTPHeaderField: headerName)
@@ -41,7 +46,7 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
         }
 
         let sessionConf = URLSessionConfiguration.default
-        if let network = config["network"] as? String,
+        if let network = network,
             network == "unmetered" {
             // Use an unmetered network (most likely WiFi).
             if #available(iOS 13.0, *) {
@@ -81,9 +86,8 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
             }
         }
 
-        self.emitter.sendEvent(withName: NetworkHandler.FETCH_EVENT, body: [
+        self.emitOnComplete([
             "requestId": self.requestId,
-            "state": "complete",
             "headers": response.allHeaderFields,
             "ok": response.statusCode >= 200 && response.statusCode < 300,
             "redirected": false, // TODO: Determine actual value.
@@ -108,9 +112,8 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
         }
         lastEventTime = currentTime
 
-        self.emitter.sendEvent(withName: NetworkHandler.FETCH_EVENT, body: [
+        self.emitOnProgress([
             "requestId": requestId,
-            "state": "progress",
             "bytesRead": totalBytesWritten,
             "contentLength": totalBytesExpectedToWrite,
             "done": false
@@ -122,9 +125,8 @@ class NetworkHandler: NSObject, URLSessionDownloadDelegate {
         if let errMsg = err?.localizedDescription {
             message += " " + errMsg
         }
-        self.emitter.sendEvent(withName: NetworkHandler.FETCH_EVENT, body: [
+        self.emitOnError([
             "requestId": self.requestId,
-            "state": "error",
             "message": message
         ])
     }

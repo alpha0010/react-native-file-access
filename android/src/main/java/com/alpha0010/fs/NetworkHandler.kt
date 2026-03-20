@@ -6,9 +6,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.facebook.react.modules.network.OkHttpClientProvider
 import okhttp3.CacheControl
 import okhttp3.Call
@@ -23,11 +21,14 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-const val FETCH_EVENT = "FetchEvent"
+typealias EventEmitter = (value: ReadableMap) -> Unit
 
-class NetworkHandler(private val context: ReactContext) {
-  private val emitter = context.getJSModule(RCTDeviceEventEmitter::class.java)
-
+class NetworkHandler(
+  private val context: Context,
+  private val emitOnProgress: EventEmitter,
+  private val emitOnError: EventEmitter,
+  private val emitOnComplete: EventEmitter
+) {
   suspend fun fetch(
     requestId: Int,
     resource: String,
@@ -48,11 +49,10 @@ class NetworkHandler(private val context: ReactContext) {
 
       // Share client with RN core library.
       getClient(unmetered) { bytesRead, contentLength, done ->
-        emitter.emit(
-          FETCH_EVENT, Arguments.makeNativeMap(
+        emitOnProgress(
+          Arguments.makeNativeMap(
             mapOf(
               "requestId" to requestId,
-              "state" to "progress",
               "bytesRead" to bytesRead,
               "contentLength" to contentLength,
               "done" to done
@@ -83,11 +83,10 @@ class NetworkHandler(private val context: ReactContext) {
 
             onComplete()
             val headers = response.headers.names().map { it to response.header(it) }
-            emitter.emit(
-              FETCH_EVENT, Arguments.makeNativeMap(
+            emitOnComplete(
+              Arguments.makeNativeMap(
                 mapOf(
                   "requestId" to requestId,
-                  "state" to "complete",
                   "headers" to Arguments.makeNativeMap(headers.toMap()),
                   "ok" to response.isSuccessful,
                   "redirected" to response.isRedirect,
@@ -180,11 +179,10 @@ class NetworkHandler(private val context: ReactContext) {
   }
 
   private fun onFetchError(requestId: Int, e: Throwable) {
-    emitter.emit(
-      FETCH_EVENT, Arguments.makeNativeMap(
+    emitOnError(
+      Arguments.makeNativeMap(
         mapOf(
           "requestId" to requestId,
-          "state" to "error",
           "message" to e.localizedMessage
         )
       )

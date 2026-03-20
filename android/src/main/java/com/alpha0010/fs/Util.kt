@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import java.io.File
+import androidx.core.net.toUri
 
 /**
  * Unified process path to correct type of DocumentFile.
@@ -11,7 +12,7 @@ import java.io.File
 fun String.asDocumentFile(context: Context): DocumentFile {
   if (isContentUri()) {
     try {
-      val uri = Uri.parse(this)
+      val uri = this.toUri()
       val dFile = if (uri.isTreeUri()) {
         // Produced by Intent.ACTION_OPEN_DOCUMENT_TREE requests.
         DocumentFile.fromTreeUri(context, uri)
@@ -23,7 +24,7 @@ fun String.asDocumentFile(context: Context): DocumentFile {
       if (dFile != null) {
         return dFile
       }
-    } catch (e: Throwable) {
+    } catch (_: Throwable) {
       // Ignored.
     }
   }
@@ -45,7 +46,7 @@ fun Uri.isTreeUri() = pathSegments.firstOrNull() == "tree"
  * Split the last component from a scoped storage uri.
  */
 fun parseScopedPath(path: String): Pair<Uri, String> {
-  val uri = Uri.parse(path)
+  val uri = path.toUri()
   val lastSegment = uri.lastPathSegment?.trimEnd('/')
     ?: throw Exception("Failed to parse '$path'.")
   val index = lastSegment.lastIndexOf('/')
@@ -67,9 +68,9 @@ fun parseScopedPath(path: String): Pair<Uri, String> {
 fun parsePathToFile(path: String): File {
   return if (path.contains("://")) {
     try {
-      val pathUri = Uri.parse(path)
+      val pathUri = path.toUri()
       File(pathUri.path!!)
-    } catch (e: Throwable) {
+    } catch (_: Throwable) {
       File(path)
     }
   } else {

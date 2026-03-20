@@ -1,17 +1,13 @@
-import { NativeModules, Platform } from 'react-native';
-import type { FileStat, FsStat, Spec } from './NativeFileAccess';
+import FileAccessNative, { type FetchInit } from './NativeFileAccess';
 import type {
   AssetType,
   Encoding,
   ExternalDir,
-  FetchEvent,
-  FetchInit,
   FetchResult,
   HashAlgorithm,
   ManagedFetchResult,
   ProgressListener,
 } from './types';
-import { NativeEventEmitter } from 'react-native';
 
 export type {
   AssetType,
@@ -19,40 +15,18 @@ export type {
   ExternalDir,
   FetchResult,
   HashAlgorithm,
-  NetworkType,
 } from './types';
-export type { FileStat, FsStat } from './NativeFileAccess';
+export type { FileStat, FsStat, NetworkType } from './NativeFileAccess';
 
 export { Util } from './util';
-
-const LINKING_ERROR =
-  `The package 'react-native-file-access' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
-
-// @ts-expect-error
-const isTurboModuleEnabled = global.__turboModuleProxy != null;
-
-const FileAccessModule = isTurboModuleEnabled
-  ? require('./NativeFileAccess').default
-  : NativeModules.FileAccess;
-
-const FileAccessNative: Spec = FileAccessModule
-  ? FileAccessModule
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
 
 /**
  * ID tracking next fetch request.
  */
-let nextRequestId = 1;
+const getRequestId = (() => {
+  let nextId = 0;
+  return () => ++nextId;
+})();
 
 /**
  * Process fetch events for the request.
@@ -63,37 +37,44 @@ function registerFetchListener(
   reject: (e: Error) => void,
   onProgress?: ProgressListener
 ) {
-  const eventEmitter = new NativeEventEmitter(FileAccessModule);
-  const listener = eventEmitter.addListener(
-    'FetchEvent',
-    (event: FetchEvent) => {
-      if (event.requestId !== requestId) {
-        return;
-      }
-
-      if (event.state === 'progress') {
-        onProgress?.(event.bytesRead, event.contentLength, event.done);
-      } else if (event.state === 'error') {
-        listener.remove();
-        reject(new Error(event.message));
-      } else if (event.state === 'complete') {
-        listener.remove();
-        const headersLower = new Map<string, string>();
-        for (const [key, value] of Object.entries(event.headers)) {
-          headersLower.set(key.toLowerCase(), value);
-        }
-        resolve({
-          getHeader: (header: string) => headersLower.get(header.toLowerCase()),
-          headers: event.headers,
-          ok: event.ok,
-          redirected: event.redirected,
-          status: event.status,
-          statusText: event.statusText,
-          url: event.url,
+  const progressListener =
+    onProgress == null
+      ? null
+      : FileAccessNative.onFetchProgress((event) => {
+          if (event.requestId === requestId) {
+            onProgress(event.bytesRead, event.contentLength, event.done);
+          }
         });
-      }
+  const errorListener = FileAccessNative.onFetchError((event) => {
+    if (event.requestId === requestId) {
+      unsubscribe();
+      reject(new Error(event.message));
     }
-  );
+  });
+  const completeListener = FileAccessNative.onFetchComplete((event) => {
+    if (event.requestId === requestId) {
+      unsubscribe();
+      const headersLower = new Map<string, string>();
+      for (const [key, value] of Object.entries(event.headers)) {
+        headersLower.set(key.toLowerCase(), value);
+      }
+      resolve({
+        getHeader: (header: string) => headersLower.get(header.toLowerCase()),
+        headers: event.headers,
+        ok: event.ok,
+        redirected: event.redirected,
+        status: event.status,
+        statusText: event.statusText,
+        url: event.url,
+      });
+    }
+  });
+
+  const unsubscribe = () => {
+    completeListener.remove();
+    errorListener.remove();
+    progressListener?.remove();
+  };
 }
 
 /**
@@ -183,7 +164,7 @@ export const FileSystem = {
   /**
    * Check device available space.
    */
-  df(): Promise<FsStat> {
+  df() {
     return FileAccessNative.df();
   },
 
@@ -197,12 +178,12 @@ export const FileSystem = {
   /**
    * Save a network request to a file.
    */
-  async fetch(
+  fetch(
     resource: string,
     init: FetchInit,
     onProgress?: ProgressListener
   ): Promise<FetchResult> {
-    const requestId = nextRequestId++;
+    const requestId = getRequestId();
     return new Promise((resolve, reject) => {
       registerFetchListener(requestId, resolve, reject, onProgress);
       FileAccessNative.fetch(requestId, resource, init);
@@ -217,7 +198,7 @@ export const FileSystem = {
     init: FetchInit,
     onProgress?: ProgressListener
   ): ManagedFetchResult {
-    const requestId = nextRequestId++;
+    const requestId = getRequestId();
     return {
       cancel: () => FileAccessNative.cancelFetch(requestId),
       result: new Promise((resolve, reject) => {
@@ -304,14 +285,14 @@ export const FileSystem = {
   /**
    * Read file metadata.
    */
-  stat(path: string): Promise<FileStat> {
+  stat(path: string) {
     return FileAccessNative.stat(path);
   },
 
   /**
    * Read metadata of all files in a directory.
    */
-  statDir(path: string): Promise<FileStat[]> {
+  statDir(path: string) {
     return FileAccessNative.statDir(path);
   },
 
@@ -388,16 +369,7 @@ export const Dirs: {
    * Android only.
    */
   SDCardDir?: string;
-} = FileAccessModule
-  ? FileAccessNative.getConstants()
-  : new Proxy(
-      { CacheDir: '', DocumentDir: '', MainBundleDir: '' },
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+} = FileAccessNative.getConstants();
 
 /**
  * Utility functions for working with Android scoped storage.

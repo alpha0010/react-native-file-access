@@ -1,4 +1,4 @@
-import type { TurboModule } from 'react-native';
+import type { CodegenTypes, TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
 export type FileStat = {
@@ -25,11 +25,50 @@ export type FsStat = {
   external_total?: number;
 };
 
+export type NetworkType = 'any' | 'unmetered';
+
+export type FetchInit = {
+  body?: string;
+  headers?: { [key: string]: string };
+  method?: string;
+
+  /**
+   * Allowed connection. Throws if specified connection is unavailable.
+   */
+  network?: NetworkType;
+
+  /**
+   * Output path.
+   */
+  path?: string;
+};
+
+export type FetchProgressEvent = {
+  requestId: number;
+  bytesRead: number;
+  contentLength: number;
+  done: boolean;
+};
+
+export type FetchErrorEvent = { requestId: number; message: string };
+
+export type FetchCompleteEvent = {
+  requestId: number;
+  headers: { [key: string]: string };
+  ok: boolean;
+  redirected: boolean;
+  status: number;
+  statusText: string;
+  url: string;
+};
+
 export interface Spec extends TurboModule {
-  addListener(eventType: string): void;
-  removeListeners(count: number): void;
+  readonly onFetchProgress: CodegenTypes.EventEmitter<FetchProgressEvent>;
+  readonly onFetchError: CodegenTypes.EventEmitter<FetchErrorEvent>;
+  readonly onFetchComplete: CodegenTypes.EventEmitter<FetchCompleteEvent>;
+
   appendFile(path: string, data: string, encoding: string): Promise<void>;
-  cancelFetch(requestId: number): Promise<void>;
+  cancelFetch(requestId: CodegenTypes.Int32): Promise<void>;
   concatFiles(source: string, target: string): Promise<number>;
   cp(source: string, target: string): Promise<void>;
   /**
@@ -40,19 +79,9 @@ export interface Spec extends TurboModule {
   df(): Promise<FsStat>;
   exists(path: string): Promise<boolean>;
   /**
-   * Listen to `FetchEvent` events from the `requestId`.
+   * Listen to `onFetch*` events from the `requestId`.
    */
-  fetch(
-    requestId: number,
-    resource: string,
-    init: {
-      body?: string;
-      headers?: Object;
-      method?: string;
-      network?: string;
-      path?: string;
-    }
-  ): void;
+  fetch(requestId: CodegenTypes.Int32, resource: string, init: FetchInit): void;
   /**
    * Only defined on iOS & MacOS.
    */
@@ -74,8 +103,8 @@ export interface Spec extends TurboModule {
   readFile(path: string, encoding: string): Promise<string>;
   readFileChunk(
     path: string,
-    offset: number,
-    length: number,
+    offset: CodegenTypes.Int32,
+    length: CodegenTypes.Int32,
     encoding: string
   ): Promise<string>;
   stat(path: string): Promise<FileStat>;

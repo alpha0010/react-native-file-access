@@ -6,19 +6,6 @@ import ZIPFoundation
 public class FileAccess : NSObject {
     private let fetchCalls = NSMapTable<NSNumber, URLSessionDownloadTask>.init(keyOptions: .copyIn, valueOptions: .weakMemory)
 
-    @objc public func constantsToExport() -> [AnyHashable : Any] {
-        return [
-            "CacheDir": NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!,
-            "DocumentDir": NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!,
-            "LibraryDir": NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first!,
-            "MainBundleDir": Bundle.main.bundlePath
-        ]
-    }
-
-    @objc public func supportedEvents() -> [String] {
-        return [NetworkHandler.FETCH_EVENT]
-    }
-
     @objc(appendFile:withData:withEncoding:withResolver:withRejecter:)
     public func appendFile(path: String, data: String, encoding: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
@@ -36,9 +23,9 @@ public class FileAccess : NSObject {
     }
 
     @objc(cancelFetch:withResolver:withRejecter:)
-    public func cancelFetch(requestId: NSNumber, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        if let call = fetchCalls.object(forKey: requestId) {
-            fetchCalls.removeObject(forKey: requestId)
+    public func cancelFetch(requestId: Int, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        if let call = fetchCalls.object(forKey: requestId as NSNumber) {
+            fetchCalls.removeObject(forKey: requestId as NSNumber)
             call.cancel()
         }
         resolve(nil)
@@ -152,13 +139,13 @@ public class FileAccess : NSObject {
         }
     }
 
-    @objc(fetch:withResource:withConfig:withEmitter:)
-    public func fetch(requestId: NSNumber, resource: String, config: NSDictionary, emitter: RCTEventEmitter) -> Void {
-        let handler = NetworkHandler(requestId: requestId, emitter: emitter) {
-            self.fetchCalls.removeObject(forKey: requestId)
+    @objc
+    public func fetch(requestId: Int, resource: String, body: String?, headers: NSDictionary?, method: String?, network: String?, path: String?, emitOnProgress: @escaping EventEmitter, emitOnError: @escaping EventEmitter, emitOnComplete: @escaping EventEmitter) -> Void {
+        let handler = NetworkHandler(requestId: requestId, emitOnProgress: emitOnProgress, emitOnError: emitOnError, emitOnComplete: emitOnComplete) {
+            self.fetchCalls.removeObject(forKey: requestId as NSNumber)
         }
-        if let call = handler.fetch(resource: resource, config: config) {
-            fetchCalls.setObject(call, forKey: requestId)
+        if let call = handler.fetch(resource: resource, body: body, headers: headers, method: method, network: network, path: path) {
+            fetchCalls.setObject(call, forKey: requestId as NSNumber)
         }
     }
 
@@ -285,7 +272,7 @@ public class FileAccess : NSObject {
     }
 
     @objc(readFileChunk:withOffset:withLength:withEncoding:withResolver:withRejecter:)
-    public func readFileChunk(path: String, offset: NSNumber, length: NSNumber, encoding: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    public func readFileChunk(path: String, offset: Int, length: Int, encoding: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         DispatchQueue.global().async {
             do {
                 let fileHandle = try FileHandle(forReadingFrom: URL(fileURLWithPath: path.path()))
@@ -293,8 +280,8 @@ public class FileAccess : NSObject {
                     fileHandle.closeFile()
                 }
 
-                fileHandle.seek(toFileOffset: UInt64(truncating: offset))
-                let binaryData = fileHandle.readData(ofLength: Int(truncating: length))
+                fileHandle.seek(toFileOffset: UInt64(offset))
+                let binaryData = fileHandle.readData(ofLength: length)
 
                 if encoding == "base64" {
                     resolve(binaryData.base64EncodedString())

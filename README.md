@@ -31,6 +31,7 @@ If the app does not use autolinking, continue to the [manual install instruction
 | <= 0.64         | 1.x.x                    |
 | 0.65+, old arch | 2.x.x, 3.x.x             |
 | 0.71+, new arch | 3.x.x                    |
+| 0.77+, new arch | 4.x.x                    |
 
 ## Usage
 

@@ -1,16 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Platform,
-  SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { Dirs, FileSystem } from 'react-native-file-access';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
-export function App() {
+function FsDemo() {
   const [info, setInfo] = useState<{ key: string; value: string }[]>([]);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     // Directory constants.
@@ -251,21 +256,34 @@ export function App() {
   }, [setInfo]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {info.map((value, index) => (
-          <View key={`${index}-${value.key}`} style={styles.row}>
-            <Text style={styles.key}>{value.key}</Text>
-            <Text style={styles.value}>{value.value}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </SafeAreaView>
+    <ScrollView
+      contentContainerStyle={{
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+    >
+      {info.map((value, index) => (
+        <View key={`${index}-${value.key}`} style={styles.row}>
+          <Text style={styles.key}>{value.key}</Text>
+          <Text style={styles.value}>{value.value}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+
+export function App() {
+  return (
+    <SafeAreaProvider>
+      <StatusBar barStyle="dark-content" />
+      <FsDemo />
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
   key: { flex: 1, padding: 2 },
   row: { flexDirection: 'row', paddingVertical: 2 },
   value: { flex: 4, padding: 2 },
