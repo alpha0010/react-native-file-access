@@ -25,6 +25,6 @@ jobs:
     - run: yarn install
       if: steps.cache-node.outputs.cache-hit != 'true'
     - run: yarn lint
-    - run: yarn typescript
+    - run: yarn typecheck
     - run: yarn test --coverage
     - run: yarn prepare
