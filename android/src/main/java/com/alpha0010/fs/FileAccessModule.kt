@@ -213,7 +213,7 @@ class FileAccessModule(reactContext: ReactApplicationContext) :
     ioScope.launch {
       try {
         val internalStat = StatFs(reactApplicationContext.filesDir.absolutePath)
-        val results = mutableMapOf(
+        val results = mutableMapOf<String, Any>(
           "internal_free" to internalStat.availableBytes,
           "internal_total" to internalStat.totalBytes
         )
