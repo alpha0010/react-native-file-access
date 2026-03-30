@@ -49,6 +49,7 @@ exampleMacos/macos/Pods
 
 # Ruby
 example/vendor/
+exampleMacos/vendor/
 
 # node.js
 #

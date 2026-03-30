@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react';
 import {
   Platform,
-  SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { Dirs, FileSystem } from 'react-native-file-access';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
-export function App() {
+function FsDemo() {
   const [info, setInfo] = useState<{ key: string; value: string }[]>([]);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     // Directory constants.
@@ -105,6 +110,16 @@ export function App() {
           return prev.slice();
         })
       )
+      .then(() => FileSystem.readFileChunk(Dirs.CacheDir + '/test.txt', 5, 10))
+      .then((res) =>
+        setInfo((prev) => {
+          prev.push({
+            key: 'readFileChunk(CacheDir/test.txt, 5, 10)',
+            value: JSON.stringify(res),
+          });
+          return prev.slice();
+        })
+      )
       .then(() => FileSystem.hash(Dirs.CacheDir + '/test.txt', 'MD5'))
       .then((res) =>
         setInfo((prev) => {
@@ -155,15 +170,38 @@ export function App() {
         })
       );
 
-    const sourcFile =
-      Platform.OS === 'ios' || Platform.OS === 'macos'
-        ? `${Dirs.CacheDir}/renamed.txt`
-        : `file://${Dirs.CacheDir}/renamed.txt`;
+    Promise.resolve().then(async () => {
+      const zipFile = Dirs.CacheDir + '/sample.zip';
+      const extractFolder = Dirs.CacheDir + '/extracted';
+      await FileSystem.unlink(zipFile).catch(console.log);
+      await FileSystem.unlink(extractFolder).catch(console.log);
+      await FileSystem.cpAsset('sample.zip', zipFile);
+      await FileSystem.unzip(zipFile, extractFolder);
+      const extractedFiles = await FileSystem.ls(extractFolder);
+      const compressedData = await FileSystem.readFile(
+        extractFolder + '/compressed-2.txt'
+      );
+      setInfo((prev) => {
+        prev.push(
+          {
+            key: 'ls(CacheDir/extracted)',
+            value: JSON.stringify(extractedFiles),
+          },
+          {
+            key: 'sample.zip:compressed-2.txt',
+            value: compressedData,
+          }
+        );
+        return prev.slice();
+      });
+    });
+
+    const sourceFile = `file://${Dirs.CacheDir}/renamed.txt`;
 
     FileSystem.unlink(Dirs.CacheDir + '/3.txt')
       .then(() => console.log('Deleted 3.txt'))
       .catch(() => console.log('Did not delete 3.txt'))
-      .then(() => FileSystem.cp(sourcFile, Dirs.CacheDir + '/3.txt'))
+      .then(() => FileSystem.cp(sourceFile, Dirs.CacheDir + '/3.txt'))
       .then(() => FileSystem.readFile(Dirs.CacheDir + '/3.txt'))
       .then((res) =>
         setInfo((prev) => {
@@ -178,13 +216,20 @@ export function App() {
     // Network access.
     FileSystem.fetch('https://example.com', {
       path: Dirs.CacheDir + '/download.html',
+      network: 'unmetered',
     })
       .then((res) => {
         setInfo((prev) => {
-          prev.push({
-            key: 'fetch(https://example.com)',
-            value: JSON.stringify(res),
-          });
+          prev.push(
+            {
+              key: 'fetch(https://example.com)',
+              value: JSON.stringify(res),
+            },
+            {
+              key: 'getHeader(cOntEnt-tYPe)',
+              value: res.getHeader('cOntEnt-tYPe') ?? 'undefined',
+            }
+          );
           return prev.slice();
         });
         return FileSystem.readFile(Dirs.CacheDir + '/download.html');
@@ -211,21 +256,34 @@ export function App() {
   }, [setInfo]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {info.map((value, index) => (
-          <View key={`${index}-${value.key}`} style={styles.row}>
-            <Text style={styles.key}>{value.key}</Text>
-            <Text style={styles.value}>{value.value}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </SafeAreaView>
+    <ScrollView
+      contentContainerStyle={{
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+    >
+      {info.map((value, index) => (
+        <View key={`${index}-${value.key}`} style={styles.row}>
+          <Text style={styles.key}>{value.key}</Text>
+          <Text style={styles.value}>{value.value}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+
+export function App() {
+  return (
+    <SafeAreaProvider>
+      <StatusBar barStyle="dark-content" />
+      <FsDemo />
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
   key: { flex: 1, padding: 2 },
   row: { flexDirection: 'row', paddingVertical: 2 },
   value: { flex: 4, padding: 2 },

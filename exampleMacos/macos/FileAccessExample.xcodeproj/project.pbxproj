@@ -7,49 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
-		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
-		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		5142014D2437B4B30078DB4F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5142014C2437B4B30078DB4F /* AppDelegate.m */; };
-		514201502437B4B30078DB4F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5142014F2437B4B30078DB4F /* ViewController.m */; };
+		5142014D2437B4B30078DB4F /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5142014C2437B4B30078DB4F /* AppDelegate.mm */; };
 		514201522437B4B40078DB4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 514201512437B4B40078DB4F /* Assets.xcassets */; };
 		514201552437B4B40078DB4F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 514201532437B4B40078DB4F /* Main.storyboard */; };
 		514201582437B4B40078DB4F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 514201572437B4B40078DB4F /* main.m */; };
-		5685D6101D62F9401DBD4E14 /* libPods-react-native-file-access-example-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B0592CAC4E6276EE8FB75B0 /* libPods-react-native-file-access-example-macOS.a */; };
-		83530AB7264A765A0089B669 /* BundledData.txt in Resources */ = {isa = PBXBuildFile; fileRef = 83530AB6264A765A0089B669 /* BundledData.txt */; };
+		9177EC360FCDDCBD26194A19 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9E3BF8CBFEE1F44735096BC5 /* PrivacyInfo.xcprivacy */; };
+		ADE39EEAD019F0355EC4F843 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9E3BF8CBFEE1F44735096BC5 /* PrivacyInfo.xcprivacy */; };
+		B495E6DF079BB72D68A698A5 /* libPods-FileAccessExample-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99A827B810B15A0BF331EA6 /* libPods-FileAccessExample-macOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		02422F9FB6FF5F34B4E63E6F /* Pods-Shared-react-native-file-access-example-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shared-react-native-file-access-example-macOS.debug.xcconfig"; path = "Target Support Files/Pods-Shared-react-native-file-access-example-macOS/Pods-Shared-react-native-file-access-example-macOS.debug.xcconfig"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* react-native-file-access-example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "react-native-file-access-example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "react-native-file-access-example/Info.plist"; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		30B2911A24DAE2830A60BAF9 /* Pods-react-native-file-access-example-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-react-native-file-access-example-macOS.release.xcconfig"; path = "Target Support Files/Pods-react-native-file-access-example-macOS/Pods-react-native-file-access-example-macOS.release.xcconfig"; sourceTree = "<group>"; };
-		38423A3E24576CBC00BC2EAC /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		4B0592CAC4E6276EE8FB75B0 /* libPods-react-native-file-access-example-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-react-native-file-access-example-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		514201492437B4B30078DB4F /* react-native-file-access-example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "react-native-file-access-example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07F961A680F5B00A75B9A /* FileAccessExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FileAccessExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		48D21C735532908D17B9AB44 /* Pods-FileAccessExample-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FileAccessExample-macOS.release.xcconfig"; path = "Target Support Files/Pods-FileAccessExample-macOS/Pods-FileAccessExample-macOS.release.xcconfig"; sourceTree = "<group>"; };
+		514201492437B4B30078DB4F /* FileAccessExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FileAccessExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5142014B2437B4B30078DB4F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		5142014C2437B4B30078DB4F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		5142014E2437B4B30078DB4F /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		5142014F2437B4B30078DB4F /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		5142014C2437B4B30078DB4F /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		514201512437B4B40078DB4F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		514201542437B4B40078DB4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		514201562437B4B40078DB4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		514201572437B4B40078DB4F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		514201592437B4B40078DB4F /* react-native-file-access-example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "react-native-file-access-example.entitlements"; sourceTree = "<group>"; };
-		83530AB6264A765A0089B669 /* BundledData.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BundledData.txt; path = ../../android/app/src/main/assets/BundledData.txt; sourceTree = "<group>"; };
-		9D32DFD059D5DB6DDEF38881 /* Pods-Shared-react-native-file-access-example-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shared-react-native-file-access-example-iOS.debug.xcconfig"; path = "Target Support Files/Pods-Shared-react-native-file-access-example-iOS/Pods-Shared-react-native-file-access-example-iOS.debug.xcconfig"; sourceTree = "<group>"; };
-		A82DFB63B157C65E5D698CA2 /* Pods-Shared-react-native-file-access-example-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shared-react-native-file-access-example-iOS.release.xcconfig"; path = "Target Support Files/Pods-Shared-react-native-file-access-example-iOS/Pods-Shared-react-native-file-access-example-iOS.release.xcconfig"; sourceTree = "<group>"; };
-		CE0E74F571E1F48FF00A8324 /* Pods-Shared-react-native-file-access-example-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shared-react-native-file-access-example-macOS.release.xcconfig"; path = "Target Support Files/Pods-Shared-react-native-file-access-example-macOS/Pods-Shared-react-native-file-access-example-macOS.release.xcconfig"; sourceTree = "<group>"; };
-		DADA8A33F3A236F980012421 /* Pods-react-native-file-access-example-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-react-native-file-access-example-macOS.debug.xcconfig"; path = "Target Support Files/Pods-react-native-file-access-example-macOS/Pods-react-native-file-access-example-macOS.debug.xcconfig"; sourceTree = "<group>"; };
+		514201592437B4B40078DB4F /* FileAccessExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FileAccessExample.entitlements; sourceTree = "<group>"; };
+		9C3276C28DB38E505AB0E40E /* Pods-FileAccessExample-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FileAccessExample-macOS.debug.xcconfig"; path = "Target Support Files/Pods-FileAccessExample-macOS/Pods-FileAccessExample-macOS.debug.xcconfig"; sourceTree = "<group>"; };
+		9E3BF8CBFEE1F44735096BC5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		C99A827B810B15A0BF331EA6 /* libPods-FileAccessExample-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FileAccessExample-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,66 +45,34 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5685D6101D62F9401DBD4E14 /* libPods-react-native-file-access-example-macOS.a in Frameworks */,
+				B495E6DF079BB72D68A698A5 /* libPods-FileAccessExample-macOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* react-native-file-access-example-iOS */ = {
-			isa = PBXGroup;
-			children = (
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.m */,
-				13B07FB51A68108700A75B9A /* Images.xcassets */,
-				13B07FB61A68108700A75B9A /* Info.plist */,
-				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
-				13B07FB71A68108700A75B9A /* main.m */,
-			);
-			path = "react-native-file-access-example-iOS";
-			sourceTree = "<group>";
-		};
-		1986A43FA6A91CFACDF0A798 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				9D32DFD059D5DB6DDEF38881 /* Pods-Shared-react-native-file-access-example-iOS.debug.xcconfig */,
-				A82DFB63B157C65E5D698CA2 /* Pods-Shared-react-native-file-access-example-iOS.release.xcconfig */,
-				02422F9FB6FF5F34B4E63E6F /* Pods-Shared-react-native-file-access-example-macOS.debug.xcconfig */,
-				CE0E74F571E1F48FF00A8324 /* Pods-Shared-react-native-file-access-example-macOS.release.xcconfig */,
-				DADA8A33F3A236F980012421 /* Pods-react-native-file-access-example-macOS.debug.xcconfig */,
-				30B2911A24DAE2830A60BAF9 /* Pods-react-native-file-access-example-macOS.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				4B0592CAC4E6276EE8FB75B0 /* libPods-react-native-file-access-example-macOS.a */,
+				C99A827B810B15A0BF331EA6 /* libPods-FileAccessExample-macOS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		5142014A2437B4B30078DB4F /* react-native-file-access-example-macOS */ = {
+		5142014A2437B4B30078DB4F /* FileAccessExample-macOS */ = {
 			isa = PBXGroup;
 			children = (
-				83530AB6264A765A0089B669 /* BundledData.txt */,
-				38423A3E24576CBC00BC2EAC /* main.jsbundle */,
 				5142014B2437B4B30078DB4F /* AppDelegate.h */,
-				5142014C2437B4B30078DB4F /* AppDelegate.m */,
-				5142014E2437B4B30078DB4F /* ViewController.h */,
-				5142014F2437B4B30078DB4F /* ViewController.m */,
+				5142014C2437B4B30078DB4F /* AppDelegate.mm */,
 				514201512437B4B40078DB4F /* Assets.xcassets */,
 				514201532437B4B40078DB4F /* Main.storyboard */,
 				514201562437B4B40078DB4F /* Info.plist */,
 				514201572437B4B40078DB4F /* main.m */,
-				514201592437B4B40078DB4F /* react-native-file-access-example.entitlements */,
+				514201592437B4B40078DB4F /* FileAccessExample.entitlements */,
 			);
-			path = "react-native-file-access-example-macOS";
+			path = "FileAccessExample-macOS";
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -136,12 +85,12 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				5142014A2437B4B30078DB4F /* react-native-file-access-example-macOS */,
-				13B07FAE1A68108700A75B9A /* react-native-file-access-example-iOS */,
+				5142014A2437B4B30078DB4F /* FileAccessExample-macOS */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				1986A43FA6A91CFACDF0A798 /* Pods */,
+				9E3BF8CBFEE1F44735096BC5 /* PrivacyInfo.xcprivacy */,
+				99D5CBCD7484238DE318DC8C /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -151,20 +100,29 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* react-native-file-access-example.app */,
-				514201492437B4B30078DB4F /* react-native-file-access-example.app */,
+				13B07F961A680F5B00A75B9A /* FileAccessExample.app */,
+				514201492437B4B30078DB4F /* FileAccessExample.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		99D5CBCD7484238DE318DC8C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9C3276C28DB38E505AB0E40E /* Pods-FileAccessExample-macOS.debug.xcconfig */,
+				48D21C735532908D17B9AB44 /* Pods-FileAccessExample-macOS.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* react-native-file-access-example-iOS */ = {
+		13B07F861A680F5B00A75B9A /* FileAccessExample-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "react-native-file-access-example-iOS" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "FileAccessExample-iOS" */;
 			buildPhases = (
-				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
@@ -174,30 +132,30 @@
 			);
 			dependencies = (
 			);
-			name = "react-native-file-access-example-iOS";
-			productName = "react-native-file-access-example";
-			productReference = 13B07F961A680F5B00A75B9A /* react-native-file-access-example.app */;
+			name = "FileAccessExample-iOS";
+			productName = FileAccessExample;
+			productReference = 13B07F961A680F5B00A75B9A /* FileAccessExample.app */;
 			productType = "com.apple.product-type.application";
 		};
-		514201482437B4B30078DB4F /* react-native-file-access-example-macOS */ = {
+		514201482437B4B30078DB4F /* FileAccessExample-macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5142015A2437B4B40078DB4F /* Build configuration list for PBXNativeTarget "react-native-file-access-example-macOS" */;
+			buildConfigurationList = 5142015A2437B4B40078DB4F /* Build configuration list for PBXNativeTarget "FileAccessExample-macOS" */;
 			buildPhases = (
 				1A938104A937498D81B3BD3B /* [CP] Check Pods Manifest.lock */,
-				381D8A6F24576A6C00465D17 /* Start Packager */,
 				514201452437B4B30078DB4F /* Sources */,
 				514201462437B4B30078DB4F /* Frameworks */,
 				514201472437B4B30078DB4F /* Resources */,
 				381D8A6E24576A4E00465D17 /* Bundle React Native code and images */,
-				3A1C71C18D5577B4CC26B53E /* [CP] Copy Pods Resources */,
+				4275B904DC7CA437150F7E97 /* [CP] Embed Pods Frameworks */,
+				7E06A4E16EE126F03C19CB8B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "react-native-file-access-example-macOS";
-			productName = "react-native-file-access-example";
-			productReference = 514201492437B4B30078DB4F /* react-native-file-access-example.app */;
+			name = "FileAccessExample-macOS";
+			productName = FileAccessExample;
+			productReference = 514201492437B4B30078DB4F /* FileAccessExample.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -217,7 +175,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "react-native-file-access-example" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "FileAccessExample" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -230,8 +188,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* react-native-file-access-example-iOS */,
-				514201482437B4B30078DB4F /* react-native-file-access-example-macOS */,
+				13B07F861A680F5B00A75B9A /* FileAccessExample-iOS */,
+				514201482437B4B30078DB4F /* FileAccessExample-macOS */,
 			);
 		};
 /* End PBXProject section */
@@ -241,8 +199,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				9177EC360FCDDCBD26194A19 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,7 +209,7 @@
 			files = (
 				514201522437B4B40078DB4F /* Assets.xcassets in Resources */,
 				514201552437B4B40078DB4F /* Main.storyboard in Resources */,
-				83530AB7264A765A0089B669 /* BundledData.txt in Resources */,
+				ADE39EEAD019F0355EC4F843 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,7 +245,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-react-native-file-access-example-macOS-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-FileAccessExample-macOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -313,59 +270,50 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native-macos/scripts/react-native-xcode.sh\n";
 		};
-		381D8A6F24576A6C00465D17 /* Start Packager */ = {
+		4275B904DC7CA437150F7E97 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FileAccessExample-macOS/Pods-FileAccessExample-macOS-frameworks.sh",
+				"${PODS_ROOT}/hermes-engine/destroot/Library/Frameworks/macosx/hermes.framework",
 			);
-			name = "Start Packager";
-			outputFileListPaths = (
-			);
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native-macos/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native-macos/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FileAccessExample-macOS/Pods-FileAccessExample-macOS-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
-		3A1C71C18D5577B4CC26B53E /* [CP] Copy Pods Resources */ = {
+		7E06A4E16EE126F03C19CB8B /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-react-native-file-access-example-macOS/Pods-react-native-file-access-example-macOS-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+				"${PODS_ROOT}/Target Support Files/Pods-FileAccessExample-macOS/Pods-FileAccessExample-macOS-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/RCT-Folly/RCT-Folly_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ZIPFoundation/ZIPFoundation_Privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/boost/boost_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/glog/glog_privacy.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCT-Folly_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ZIPFoundation_Privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/boost_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/glog_privacy.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-react-native-file-access-example-macOS/Pods-react-native-file-access-example-macOS-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		FD10A7F022414F080027D42C /* Start Packager */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Start Packager";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native-macos/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native-macos/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FileAccessExample-macOS/Pods-FileAccessExample-macOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -375,8 +323,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,23 +330,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				514201502437B4B30078DB4F /* ViewController.m in Sources */,
 				514201582437B4B40078DB4F /* main.m in Sources */,
-				5142014D2437B4B30078DB4F /* AppDelegate.m in Sources */,
+				5142014D2437B4B30078DB4F /* AppDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		13B07FB11A68108700A75B9A /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				13B07FB21A68108700A75B9A /* Base */,
-			);
-			name = LaunchScreen.xib;
-			sourceTree = "<group>";
-		};
 		514201532437B4B40078DB4F /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -419,7 +356,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "react-native-file-access-example-iOS/Info.plist";
+				INFOPLIST_FILE = "FileAccessExample-iOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -427,7 +364,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "react-native-file-access-example";
+				PRODUCT_NAME = FileAccessExample;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -440,7 +377,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = "react-native-file-access-example-iOS/Info.plist";
+				INFOPLIST_FILE = "FileAccessExample-iOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -448,7 +385,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "react-native-file-access-example";
+				PRODUCT_NAME = FileAccessExample;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -456,43 +393,45 @@
 		};
 		5142015B2437B4B40078DB4F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DADA8A33F3A236F980012421 /* Pods-react-native-file-access-example-macOS.debug.xcconfig */;
+			baseConfigurationReference = 9C3276C28DB38E505AB0E40E /* Pods-FileAccessExample-macOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
-				INFOPLIST_FILE = "react-native-file-access-example-macos/Info.plist";
+				DEAD_CODE_STRIPPING = NO;
+				INFOPLIST_FILE = "FileAccessExample-macos/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "react-native-file-access-example";
+				PRODUCT_NAME = FileAccessExample;
 				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		5142015C2437B4B40078DB4F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 30B2911A24DAE2830A60BAF9 /* Pods-react-native-file-access-example-macOS.release.xcconfig */;
+			baseConfigurationReference = 48D21C735532908D17B9AB44 /* Pods-FileAccessExample-macOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
-				INFOPLIST_FILE = "react-native-file-access-example-macos/Info.plist";
+				INFOPLIST_FILE = "FileAccessExample-macos/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "react-native-file-access-example";
+				PRODUCT_NAME = FileAccessExample;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
 			};
@@ -503,7 +442,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -548,13 +487,16 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = (
+					"$(SDKROOT)/usr/lib/swift",
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
-					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -563,7 +505,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -601,12 +543,14 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = (
+					"$(SDKROOT)/usr/lib/swift",
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
-					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -614,7 +558,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "react-native-file-access-example-iOS" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "FileAccessExample-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -623,7 +567,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5142015A2437B4B40078DB4F /* Build configuration list for PBXNativeTarget "react-native-file-access-example-macOS" */ = {
+		5142015A2437B4B40078DB4F /* Build configuration list for PBXNativeTarget "FileAccessExample-macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5142015B2437B4B40078DB4F /* Debug */,
@@ -632,7 +576,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "react-native-file-access-example" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "FileAccessExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

@@ -33,6 +33,7 @@
   ],
   "scripts": {
     "example": "yarn workspace react-native-file-access-example",
+    "exampleMacos": "yarn workspace react-native-file-access-example-macos",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "prepare": "bob build",
     "release": "release-it",
@@ -48,6 +49,7 @@
     "download",
     "file",
     "filesystem",
+    "file system",
     "fs"
   ],
   "repository": {
@@ -93,7 +95,8 @@
     "react-native": "*"
   },
   "workspaces": [
-    "example"
+    "example",
+    "exampleMacos"
   ],
   "packageManager": "yarn@4.11.0",
   "react-native-builder-bob": {

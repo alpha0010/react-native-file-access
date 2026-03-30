@@ -1,40 +1,18 @@
 const path = require('path');
-const blacklist = require('metro-config/src/defaults/blacklist');
-const escape = require('escape-string-regexp');
-const pak = require('../package.json');
+const { getDefaultConfig } = require('@react-native/metro-config');
+const { withMetroConfig } = require('react-native-monorepo-config');
 
 const root = path.resolve(__dirname, '..');
 
-const modules = Object.keys({
-  ...pak.peerDependencies,
+/**
+ * Metro configuration
+ * https://reactnative.dev/docs/metro
+ *
+ * @type {import('@react-native/metro-config').MetroConfig}
+ */
+const config = withMetroConfig(getDefaultConfig(__dirname), {
+  root,
+  dirname: __dirname,
 });
 
-module.exports = {
-  projectRoot: __dirname,
-  watchFolders: [root],
-
-  // We need to make sure that only one version is loaded for peerDependencies
-  // So we blacklist them at the root, and alias them to the versions in example's node_modules
-  resolver: {
-    blacklistRE: blacklist(
-      modules.map(
-        (m) =>
-          new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`)
-      )
-    ),
-
-    extraNodeModules: {
-      'react': path.join(__dirname, 'node_modules/react'),
-      'react-native': path.join(__dirname, 'node_modules/react-native-macos'),
-    },
-  },
-
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: true,
-      },
-    }),
-  },
-};
+module.exports = config;

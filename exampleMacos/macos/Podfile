@@ -1,36 +1,30 @@
-require_relative '../node_modules/react-native-macos/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 
-target 'react-native-file-access-example-macOS' do
-  platform :macos, '10.13'
+require 'pathname'
+
+ws_dir = Pathname.new(__dir__)
+ws_dir = ws_dir.parent until
+  File.exist?("#{ws_dir}/node_modules/react-native-macos/scripts/react_native_pods.rb") ||
+  ws_dir.expand_path.to_s == '/'
+require "#{ws_dir}/node_modules/react-native-macos/scripts/react_native_pods.rb"
+
+prepare_react_native_project!
+
+target 'FileAccessExample-macOS' do
+  platform :macos, '14.0'
   use_native_modules!
+
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+
   use_react_native!(
     :path => '../node_modules/react-native-macos',
-    
-    # To use Hermes, install the `hermes-engine-darwin` npm package, e.g.:
-    #   $ yarn add 'hermes-engine-darwin@~0.5.3'
-    #
-    # Then enable this option:
-    #   :hermes_enabled => true
+    :fabric_enabled => ENV['RCT_NEW_ARCH_ENABLED'] == '1',
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  # Pods specifically for macOS target
-  pod 'react-native-file-access', :path => '../..'
+  post_install do |installer|
+    react_native_post_install(installer)
+  end
 end
-
-# target 'react-native-file-access-example-iOS' do
-#   platform :ios, '10'
-#   use_native_modules!
-#   use_react_native!(:path => '../node_modules/react-native-macos')
-
-#   # Enables Flipper.
-#   #
-#   # Note that if you have use_frameworks! enabled, Flipper will not work and
-#   # you should disable these next few lines.
-#   use_flipper!
-#   post_install do |installer|
-#     flipper_post_install(installer)
-#   end
-
-#   # Pods specifically for iOS target
-# end
