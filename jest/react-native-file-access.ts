@@ -7,11 +7,9 @@ import type {
   FileStat,
   FsStat,
   HashAlgorithm,
-  Util as UtilFunctions,
 } from 'react-native-file-access';
 
-export const Util: typeof UtilFunctions =
-  require('react-native-file-access/lib/commonjs/util').Util;
+export { Util } from 'react-native-file-access/util';
 
 export const Dirs = {
   CacheDir: '/mock/CacheDir',
