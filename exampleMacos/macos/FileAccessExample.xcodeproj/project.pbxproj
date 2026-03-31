@@ -14,6 +14,8 @@
 		9177EC360FCDDCBD26194A19 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9E3BF8CBFEE1F44735096BC5 /* PrivacyInfo.xcprivacy */; };
 		ADE39EEAD019F0355EC4F843 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9E3BF8CBFEE1F44735096BC5 /* PrivacyInfo.xcprivacy */; };
 		B495E6DF079BB72D68A698A5 /* libPods-FileAccessExample-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C99A827B810B15A0BF331EA6 /* libPods-FileAccessExample-macOS.a */; };
+		B598E4F22F7C2168002C163C /* sample.zip in Resources */ = {isa = PBXBuildFile; fileRef = B598E4F12F7C2168002C163C /* sample.zip */; };
+		B598E4F32F7C2168002C163C /* BundledData.txt in Resources */ = {isa = PBXBuildFile; fileRef = B598E4F02F7C2168002C163C /* BundledData.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,7 +30,9 @@
 		514201572437B4B40078DB4F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		514201592437B4B40078DB4F /* FileAccessExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FileAccessExample.entitlements; sourceTree = "<group>"; };
 		9C3276C28DB38E505AB0E40E /* Pods-FileAccessExample-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FileAccessExample-macOS.debug.xcconfig"; path = "Target Support Files/Pods-FileAccessExample-macOS/Pods-FileAccessExample-macOS.debug.xcconfig"; sourceTree = "<group>"; };
-		9E3BF8CBFEE1F44735096BC5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		9E3BF8CBFEE1F44735096BC5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		B598E4F02F7C2168002C163C /* BundledData.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = BundledData.txt; sourceTree = "<group>"; };
+		B598E4F12F7C2168002C163C /* sample.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = sample.zip; sourceTree = "<group>"; };
 		C99A827B810B15A0BF331EA6 /* libPods-FileAccessExample-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FileAccessExample-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -64,6 +68,8 @@
 		5142014A2437B4B30078DB4F /* FileAccessExample-macOS */ = {
 			isa = PBXGroup;
 			children = (
+				B598E4F02F7C2168002C163C /* BundledData.txt */,
+				B598E4F12F7C2168002C163C /* sample.zip */,
 				5142014B2437B4B30078DB4F /* AppDelegate.h */,
 				5142014C2437B4B30078DB4F /* AppDelegate.mm */,
 				514201512437B4B40078DB4F /* Assets.xcassets */,
@@ -112,7 +118,6 @@
 				9C3276C28DB38E505AB0E40E /* Pods-FileAccessExample-macOS.debug.xcconfig */,
 				48D21C735532908D17B9AB44 /* Pods-FileAccessExample-macOS.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -209,6 +214,8 @@
 			files = (
 				514201522437B4B40078DB4F /* Assets.xcassets in Resources */,
 				514201552437B4B40078DB4F /* Main.storyboard in Resources */,
+				B598E4F22F7C2168002C163C /* sample.zip in Resources */,
+				B598E4F32F7C2168002C163C /* BundledData.txt in Resources */,
 				ADE39EEAD019F0355EC4F843 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

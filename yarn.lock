@@ -10396,6 +10396,10 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
+    react-native-macos: "*"
+  peerDependenciesMeta:
+    react-native-macos:
+      optional: true
   languageName: unknown
   linkType: soft
 

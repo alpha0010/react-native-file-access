@@ -92,7 +92,13 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-macos": "*"
+  },
+  "peerDependenciesMeta": {
+    "react-native-macos": {
+      "optional": true
+    }
   },
   "workspaces": [
     "example",
