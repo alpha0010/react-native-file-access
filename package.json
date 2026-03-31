@@ -1,6 +1,6 @@
 {
   "name": "react-native-file-access",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Filesystem access for React Native",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
