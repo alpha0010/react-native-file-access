@@ -27,7 +27,7 @@ jobs:
         node-version: 24
     - run: yarn install
       if: steps.cache-node.outputs.cache-hit != 'true'
+    - run: yarn prepare
     - run: yarn lint
     - run: yarn typecheck
     - run: yarn test --coverage
-    - run: yarn prepare
