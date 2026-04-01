@@ -91,7 +91,7 @@ const text = await FileSystem.readFile(Dirs.CacheDir + '/test.txt');
 - Check if a path exists.
 
 ```
-FilesSystem.fetch(
+FileSystem.fetch(
   resource: string,
   init: { body?: string, headers?: { [key: string]: string }, method?: string, network?: 'any' | 'unmetered', path?: string },
   onProgress?: (bytesRead: number, contentLength: number, done: boolean) => void
@@ -119,7 +119,7 @@ type FetchResult = {
     `contentLength` is only accurate if the server sends the correct headers.
 
 ```
-FilesSystem.fetchManaged(
+FileSystem.fetchManaged(
   resource: string,
   init: { body?: string, headers?: { [key: string]: string }, method?: string, network?: 'any' | 'unmetered', path?: string },
   onProgress?: (bytesRead: number, contentLength: number, done: boolean) => void
@@ -134,7 +134,7 @@ type ManagedFetchResult = {
 - Save a network request to a file.
   - Similar to `fetch()`, with the option to cancel before completion.
 
-`FilesSystem.getAppGroupDir(groupName: string): Promise<string>`
+`FileSystem.getAppGroupDir(groupName: string): Promise<string>`
 
 - Get the directory for your app group (iOS & MacOS only).
   - App groups are used on iOS/MacOS for storing content, which is shared between apps.
@@ -145,11 +145,11 @@ type ManagedFetchResult = {
 - Create a hard link at target pointing to source.
   - Note: On Android, creating hardlinks requires root access.
 
-`FilesSystem.hash(path: string, algorithm: 'MD5' | 'SHA-1' | 'SHA-224' | 'SHA-256' | 'SHA-384' | 'SHA-512'): Promise<string>`
+`FileSystem.hash(path: string, algorithm: 'MD5' | 'SHA-1' | 'SHA-224' | 'SHA-256' | 'SHA-384' | 'SHA-512'): Promise<string>`
 
 - Hash the file content.
 
-`FilesSystem.isDir(path: string): Promise<boolean>`
+`FileSystem.isDir(path: string): Promise<boolean>`
 
 - Check if a path is a directory.
 
