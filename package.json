@@ -15,6 +15,7 @@
       "types": "./lib/typescript/src/util.d.ts",
       "default": "./lib/module/util.js"
     },
+    "./jest/mock": "./jest/mock.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -25,6 +26,7 @@
     "cpp",
     "*.podspec",
     "react-native.config.js",
+    "jest",
     "!ios/build",
     "!android/build",
     "!android/gradle",

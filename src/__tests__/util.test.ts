@@ -1,3 +1,5 @@
+import { expect, it } from '@jest/globals';
+
 import { Util } from '../util';
 
 it('extracts basename', () => {

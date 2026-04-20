@@ -34,6 +34,18 @@ function splitPath(path: string, separator: string) {
   };
 }
 
+/**
+ * Utility functions for working with Android scoped storage.
+ */
+export const AndroidScoped = {
+  /**
+   * Append a path segment to an Android scoped storage content uri.
+   */
+  appendPath(basePath: string, segment: string) {
+    return basePath + encodeURIComponent('/' + segment);
+  },
+};
+
 export const Util = {
   /**
    * Get the file/folder name from the end of the path.

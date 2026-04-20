@@ -253,8 +253,30 @@ Note:
 
 For ease of testing, this library contains a mock implementation:
 [jest/react-native-file-access.ts](https://github.com/alpha0010/react-native-file-access/blob/master/jest/react-native-file-access.ts).
-To use, copy it into the [`__mocks__`](https://jestjs.io/docs/en/manual-mocks#mocking-node-modules)
-folder, modifying if needed.
+
+Install the mock by adding the following to the
+[jest setup file](https://jestjs.io/docs/configuration#setupfiles-array).
+```js
+import { mockRnfaModule } from 'react-native-file-access/jest/mock';
+
+jest.mock('react-native-file-access', () => mockRnfaModule);
+```
+
+This may require editing the configured
+[`transformIgnorePatterns`](https://jestjs.io/docs/configuration#transformignorepatterns-arraystring).
+
+```js
+// (Optional) clear mock state between tests:
+import { FileSystem } from 'react-native-file-access/jest/mock';
+
+beforeEach(() => {
+  FileSystem.filesystem.clear();
+});
+```
+
+Alternatively, if modifications are required, copy the mock into the
+[`__mocks__`](https://jestjs.io/docs/manual-mocks#mocking-node-modules)
+folder, and edit as needed.
 
 ## Alternatives
 

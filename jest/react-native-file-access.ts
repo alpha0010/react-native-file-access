@@ -1,4 +1,4 @@
-/* global jest */
+import { jest } from '@jest/globals';
 
 import { Platform } from 'react-native';
 import type {
@@ -9,7 +9,7 @@ import type {
   HashAlgorithm,
 } from 'react-native-file-access';
 
-export { Util } from 'react-native-file-access/util';
+export { AndroidScoped, Util } from 'react-native-file-access/util';
 
 export const Dirs = {
   CacheDir: '/mock/CacheDir',
@@ -69,10 +69,12 @@ class FileSystemMock {
   /**
    * Check device available space.
    */
-  public df = jest.fn<Promise<FsStat>, []>(async () => ({
-    internal_free: 100,
-    internal_total: 200,
-  }));
+  public df = jest.fn(
+    async (): Promise<FsStat> => ({
+      internal_free: 100,
+      internal_total: 200,
+    })
+  );
 
   /**
    * Check if a path exists.

@@ -18,7 +18,7 @@ export type {
 } from './types';
 export type { FileStat, FsStat, NetworkType } from './NativeFileAccess';
 
-export { Util } from './util';
+export { AndroidScoped, Util } from './util';
 
 /**
  * ID tracking next fetch request.
@@ -370,15 +370,3 @@ export const Dirs: {
    */
   SDCardDir?: string;
 } = FileAccessNative.getConstants();
-
-/**
- * Utility functions for working with Android scoped storage.
- */
-export const AndroidScoped = {
-  /**
-   * Append a path segment to an Android scoped storage content uri.
-   */
-  appendPath(basePath: string, segment: string) {
-    return basePath + encodeURIComponent('/' + segment);
-  },
-};
