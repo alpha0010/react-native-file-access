@@ -19,6 +19,7 @@ jobs:
         path: |
           node_modules
           example/node_modules
+          exampleMacos/node_modules
         key: ${{ hashFiles('package.json', 'yarn.lock', 'example/package.json') }}
     - run: corepack enable
     - uses: actions/setup-node@v5
